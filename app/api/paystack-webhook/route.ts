@@ -4,8 +4,22 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin'
 
 /**
  * POST /api/paystack-webhook
- * - Validates signature
- * - Handles charge.success and charge.failed events to update subscription status
+ * Paystack Webhook Handler (Server-to-Server)
+ *
+ * IMPORTANT: Configure this URL in Paystack Dashboard:
+ * - Settings → API Keys & Webhooks → Webhook URLs
+ * - Webhook URL: https://leads.clintonstack.com/api/paystack-webhook
+ * - Use this endpoint for both Sandbox and Live; the PAYSTACK_SECRET_KEY env variable determines which mode
+ * - Paystack will POST to this endpoint with x-paystack-signature header
+ *
+ * Events handled:
+ * - charge.success: Activates subscription (subscription_active=true, subscription_expires_at in 30 days)
+ * - charge.failed: Deactivates subscription (subscription_active=false)
+ * - Other events: Logged but ignored
+ *
+ * Signature Verification:
+ * - All requests include x-paystack-signature header (HMAC SHA512 with PAYSTACK_SECRET_KEY)
+ * - We validate the signature before processing any event
  */
 export async function POST(request: Request) {
   try {

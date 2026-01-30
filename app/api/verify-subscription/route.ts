@@ -4,9 +4,18 @@ import { supabaseAdmin } from '../../../lib/supabaseAdmin'
 
 /**
  * GET /api/verify-subscription?reference=...
- * - verifies Paystack transaction
- * - expects metadata.user_id and metadata.plan to be present (we set them at init)
- * - updates Supabase `profiles` with subscription_active and subscription_expires_at
+ * Paystack Callback Handler
+ *
+ * IMPORTANT: Configure this URL in Paystack Dashboard:
+ * - Settings → API Keys & Webhooks → Webhook URLs
+ * - Success Redirect URL: https://leads.clintonstack.com/api/verify-subscription
+ * - Use this endpoint for both Sandbox and Live; the PAYSTACK_SECRET_KEY env variable determines which mode
+ *
+ * Flow:
+ * - Paystack redirects user here after successful payment with ?reference=<transaction_ref>
+ * - Verifies the transaction via Paystack API
+ * - Updates Supabase `profiles` with subscription_active=true and subscription_expires_at (30 days from now)
+ * - Redirects user to dashboard with success flag
  */
 export async function GET(request: Request) {
   try {
