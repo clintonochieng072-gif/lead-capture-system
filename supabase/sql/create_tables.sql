@@ -31,6 +31,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 /**
  * profiles
  * Links Supabase auth.users to application user data
+ * Includes subscription management for Paystack integration
  */
 CREATE TABLE IF NOT EXISTS public.profiles (
   user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -39,6 +40,12 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   avatar_url text,
   company_name text,
   country text DEFAULT 'KE',
+  
+  -- Subscription fields (Paystack integration)
+  subscription_active boolean DEFAULT false,
+  subscription_expires_at timestamptz,
+  plan text DEFAULT 'Standard',
+  
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now(),
   metadata jsonb DEFAULT '{}'::jsonb
