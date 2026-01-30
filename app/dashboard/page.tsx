@@ -7,13 +7,16 @@ import { getUserTrackingLinks, getUserLeads, updateTrackingLinkTarget } from '..
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = React.useState<any>(null);
+  const [hasPaid, setHasPaid] = React.useState(false);
   const [links, setLinks] = React.useState<any[]>([]);
   const [leads, setLeads] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [syncing, setSyncing] = React.useState(false);
+  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
+  const [earlyFull, setEarlyFull] = React.useState(false);
+  const [payingPlan, setPayingPlan] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    const initDashboard = async () => {
+  const refreshDashboard = React.useCallback(async () => {
       setLoading(true);
       const { data: { session } } = await supabaseClient.auth.getSession();
 
@@ -28,7 +31,7 @@ export default function DashboardPage() {
       try {
         const { data: profile } = await supabaseClient
           .from('profiles')
-          .select('user_id')
+          .select('*')
           .eq('user_id', session.user.id)
           .maybeSingle();
 
@@ -44,6 +47,9 @@ export default function DashboardPage() {
           });
         }
 
+        const paid = Boolean(profile?.has_paid ?? profile?.subscription_active);
+        setHasPaid(paid);
+
         const linksData = await getUserTrackingLinks(session.user.id);
         setLinks(linksData);
 
@@ -55,12 +61,75 @@ export default function DashboardPage() {
         setSyncing(false);
         setLoading(false);
       }
-    };
+    }, [router]);
 
-    initDashboard();
-  }, [router]);
+  React.useEffect(() => {
+    refreshDashboard();
+  }, [refreshDashboard]);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('subscription') === 'success') {
+      // Refresh state after payment so gated features unlock immediately.
+      refreshDashboard();
+    }
+  }, [refreshDashboard]);
+
+  React.useEffect(() => {
+    // Early Access is limited to the first 10 active subscribers.
+    // This client-side check disables the plan; the server enforces the limit.
+    const checkEarly = async () => {
+      try {
+        const { data, error } = await supabaseClient
+          .from('profiles')
+          .select('user_id')
+          .eq('plan', 'Early Access')
+          .eq('subscription_active', true);
+        if (error) {
+          console.error('Supabase check error', error);
+          return;
+        }
+        setEarlyFull((data || []).length >= 10);
+      } catch (err) {
+        console.error('checkEarly error', err);
+      }
+    };
+    checkEarly();
+  }, []);
+
+  const handleActivate = async (planName: string) => {
+    if (!user?.id) return;
+    setPayingPlan(planName);
+    try {
+      const res = await fetch('/api/init-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planName, userId: user.id })
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        alert(json.error || 'Error initializing payment');
+        return;
+      }
+      if (json.authorization_url) {
+        window.location.href = json.authorization_url;
+      } else {
+        alert('No authorization URL returned');
+      }
+    } catch (err) {
+      console.error('init-subscription error', err);
+      alert('Server error');
+    } finally {
+      setPayingPlan(null);
+    }
+  };
 
   const handleUpdateTarget = async (linkId: string) => {
+    if (!hasPaid) {
+      // Prevent configuration when subscription is inactive.
+      return;
+    }
     const newUrl = prompt('Enter website URL (e.g., https://example.com)');
     if (!newUrl) return;
 
@@ -97,6 +166,21 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {!hasPaid && (
+        <section className="card border border-yellow-200 bg-yellow-50">
+          <h2 className="text-xl font-bold text-gray-900">Your account is inactive</h2>
+          <p className="mt-2 text-gray-700">
+            Activate your subscription to connect your website, capture leads, and manage them from your dashboard.
+          </p>
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="mt-4 btn-primary"
+          >
+            Activate Account
+          </button>
+        </section>
+      )}
+
       <section className="card bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
         <h2 className="text-2xl font-bold text-gray-900">
           Welcome, {user?.user_metadata?.full_name || user?.email}
@@ -133,29 +217,46 @@ export default function DashboardPage() {
                 <div className="mb-4 space-y-3">
                   <div>
                     <p className="text-xs font-medium text-gray-500 uppercase mb-1">Target</p>
-                    {link.target_url ? (
-                      <a href={link.target_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm break-all">
-                        {link.target_url}
-                      </a>
-                    ) : (
-                      <span className="text-gray-400 italic text-sm">Not set</span>
+                    <input
+                      type="url"
+                      className="w-full bg-white px-3 py-2 text-sm rounded border border-gray-300 text-gray-700"
+                      value={link.target_url || ''}
+                      placeholder="https://example.com"
+                      disabled={!hasPaid || syncing}
+                      readOnly
+                    />
+                    {/* Explain what the Target URL does for new users */}
+                    <p className="mt-1 text-xs text-gray-500">
+                      Set your website URL. After a visitor submits their details, they will be redirected to this URL.
+                    </p>
+                    {!hasPaid && (
+                      // Disabled until payment is active to prevent configuring value-delivering features
+                      <p className="mt-1 text-xs text-gray-500">
+                        Activate your account to connect your website and start capturing leads.
+                      </p>
                     )}
                   </div>
 
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">Share</p>
-                    <div className="flex gap-2">
-                      <code className="flex-1 bg-white px-3 py-2 text-xs rounded border border-gray-300 text-gray-700 overflow-auto">
-                        {typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`}
-                      </code>
-                      <button onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`)} className="btn-secondary text-sm">
-                        Copy
-                      </button>
+                  {hasPaid && (
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 uppercase mb-1">Share</p>
+                      <div className="flex gap-2">
+                        <code className="flex-1 bg-white px-3 py-2 text-xs rounded border border-gray-300 text-gray-700 overflow-auto">
+                          {typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`}
+                        </code>
+                        <button onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`)} className="btn-secondary text-sm">
+                          Copy
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                <button onClick={() => handleUpdateTarget(link.id)} className="btn-primary text-sm" disabled={syncing}>
+                <button
+                  onClick={() => handleUpdateTarget(link.id)}
+                  className="btn-primary text-sm"
+                  disabled={!hasPaid || syncing}
+                >
                   Set Target URL
                 </button>
               </div>
@@ -163,6 +264,48 @@ export default function DashboardPage() {
           </div>
         )}
       </section>
+
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold">Activate your account</h3>
+              <button onClick={() => setShowPaymentModal(false)} className="text-gray-500 hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">Choose a plan to unlock your lead capture tools.</p>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <div className={`rounded-lg border p-4 ${earlyFull ? 'opacity-60' : ''}`}>
+                <h4 className="text-lg font-semibold">Early Access Plan</h4>
+                <p className="text-sm text-gray-600">KES 499 / month</p>
+                <p className="mt-2 text-xs text-gray-500">Limited to the first 10 users.</p>
+                <button
+                  className="mt-4 btn-primary w-full"
+                  disabled={earlyFull || payingPlan === 'Early Access'}
+                  onClick={() => handleActivate('Early Access')}
+                >
+                  {earlyFull ? 'Limit Reached' : payingPlan === 'Early Access' ? 'Processing…' : 'Pay Now'}
+                </button>
+              </div>
+
+              <div className="rounded-lg border p-4">
+                <h4 className="text-lg font-semibold">Standard Plan</h4>
+                <p className="text-sm text-gray-600">KES 999 / month</p>
+                <p className="mt-2 text-xs text-gray-500">Unlimited access.</p>
+                <button
+                  className="mt-4 btn-primary w-full"
+                  disabled={payingPlan === 'Standard'}
+                  onClick={() => handleActivate('Standard')}
+                >
+                  {payingPlan === 'Standard' ? 'Processing…' : 'Pay Now'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="card">
         <div className="mb-6">
