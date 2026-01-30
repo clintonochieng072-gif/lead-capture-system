@@ -165,16 +165,16 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
       {!hasPaid && (
         <section className="card border border-yellow-200 bg-yellow-50">
-          <h2 className="text-xl font-bold text-gray-900">Your account is inactive</h2>
-          <p className="mt-2 text-gray-700">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">Your account is inactive</h2>
+          <p className="mt-2 text-sm sm:text-base text-gray-700">
             Activate your subscription to connect your website, capture leads, and manage them from your dashboard.
           </p>
           <button
             onClick={() => setShowPaymentModal(true)}
-            className="mt-4 btn-primary"
+            className="mt-4 btn-primary w-full sm:w-auto"
           >
             Activate Account
           </button>
@@ -182,32 +182,32 @@ export default function DashboardPage() {
       )}
 
       <section className="card bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">
           Welcome, {user?.user_metadata?.full_name || user?.email}
         </h2>
-        <p className="mt-2 text-gray-600">Manage your tracking links and monitor leads.</p>
+        <p className="mt-2 text-sm sm:text-base text-gray-600">Manage your tracking links and monitor leads.</p>
       </section>
 
       <section className="card">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Tracking Links</h2>
-          <p className="text-gray-600">{links.length} link{links.length !== 1 ? 's' : ''}</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Tracking Links</h2>
+          <p className="text-sm sm:text-base text-gray-600">{links.length} link{links.length !== 1 ? 's' : ''}</p>
         </div>
 
         {links.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 py-8 text-center">
-            <p className="text-gray-600">No links yet.</p>
+            <p className="text-sm sm:text-base text-gray-600">No links yet.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {links.map(link => (
-              <div key={link.id} className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className="mb-3 flex justify-between">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{link.slug}</h3>
-                    <p className="text-sm text-gray-600">{link.label}</p>
+              <div key={link.id} className="rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-5">
+                <div className="mb-3 flex flex-col sm:flex-row sm:justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">{link.slug}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">{link.label}</p>
                   </div>
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  <span className={`px-3 py-1 text-xs font-medium rounded-full self-start ${
                     link.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-800'
                   }`}>
                     {link.is_active ? 'Active' : 'Inactive'}
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                     <p className="text-xs font-medium text-gray-500 uppercase mb-1">Target</p>
                     <input
                       type="url"
-                      className="w-full bg-white px-3 py-2 text-sm rounded border border-gray-300 text-gray-700"
+                      className="w-full bg-white px-3 py-2 text-xs sm:text-sm rounded border border-gray-300 text-gray-700"
                       value={link.target_url || ''}
                       placeholder="https://example.com"
                       disabled={!hasPaid || syncing}
@@ -240,11 +240,11 @@ export default function DashboardPage() {
                   {hasPaid && (
                     <div>
                       <p className="text-xs font-medium text-gray-500 uppercase mb-1">Share</p>
-                      <div className="flex gap-2">
-                        <code className="flex-1 bg-white px-3 py-2 text-xs rounded border border-gray-300 text-gray-700 overflow-auto">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <code className="flex-1 bg-white px-3 py-2 text-xs rounded border border-gray-300 text-gray-700 overflow-x-auto whitespace-nowrap">
                           {typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`}
                         </code>
-                        <button onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`)} className="btn-secondary text-sm">
+                        <button onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`)} className="btn-secondary text-sm whitespace-nowrap">
                           Copy
                         </button>
                       </div>
@@ -254,7 +254,7 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => handleUpdateTarget(link.id)}
-                  className="btn-primary text-sm"
+                  className="btn-primary text-sm w-full sm:w-auto"
                   disabled={!hasPaid || syncing}
                 >
                   Set Target URL
@@ -267,22 +267,22 @@ export default function DashboardPage() {
 
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold">Activate your account</h3>
-              <button onClick={() => setShowPaymentModal(false)} className="text-gray-500 hover:text-gray-700">
+          <div className="w-full max-w-2xl rounded-xl bg-white p-4 sm:p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg sm:text-xl font-bold">Activate your account</h3>
+              <button onClick={() => setShowPaymentModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl leading-none p-1">
                 ✕
               </button>
             </div>
-            <p className="mt-2 text-sm text-gray-600">Choose a plan to unlock your lead capture tools.</p>
+            <p className="text-xs sm:text-sm text-gray-600">Choose a plan to unlock your lead capture tools.</p>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="mt-4 sm:mt-6 grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               <div className={`rounded-lg border p-4 ${earlyFull ? 'opacity-60' : ''}`}>
-                <h4 className="text-lg font-semibold">Early Access Plan</h4>
+                <h4 className="text-base sm:text-lg font-semibold">Early Access Plan</h4>
                 <p className="text-sm text-gray-600">KES 499 / month</p>
                 <p className="mt-2 text-xs text-gray-500">Limited to the first 10 users.</p>
                 <button
-                  className="mt-4 btn-primary w-full"
+                  className="mt-4 btn-primary w-full text-sm sm:text-base"
                   disabled={earlyFull || payingPlan === 'Early Access'}
                   onClick={() => handleActivate('Early Access')}
                 >
@@ -291,11 +291,11 @@ export default function DashboardPage() {
               </div>
 
               <div className="rounded-lg border p-4">
-                <h4 className="text-lg font-semibold">Standard Plan</h4>
+                <h4 className="text-base sm:text-lg font-semibold">Standard Plan</h4>
                 <p className="text-sm text-gray-600">KES 999 / month</p>
                 <p className="mt-2 text-xs text-gray-500">Unlimited access.</p>
                 <button
-                  className="mt-4 btn-primary w-full"
+                  className="mt-4 btn-primary w-full text-sm sm:text-base"
                   disabled={payingPlan === 'Standard'}
                   onClick={() => handleActivate('Standard')}
                 >
@@ -309,13 +309,13 @@ export default function DashboardPage() {
 
       <section className="card">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Captured Leads</h2>
-          <p className="text-gray-600">{leads.length} lead{leads.length !== 1 ? 's' : ''}</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Captured Leads</h2>
+          <p className="text-sm sm:text-base text-gray-600">{leads.length} lead{leads.length !== 1 ? 's' : ''}</p>
         </div>
 
         {leads.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 py-8 text-center">
-            <p className="text-gray-600">No leads yet. Share your link!</p>
+            <p className="text-sm sm:text-base text-gray-600">No leads yet. Share your link!</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -325,24 +325,24 @@ export default function DashboardPage() {
 
               return (
                 <div key={link.id}>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-3">
                     {link.slug} ({linkLeads.length} lead{linkLeads.length !== 1 ? 's' : ''})
                   </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-4 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-[500px]">
                       <thead className="border-b border-gray-200 bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left font-semibold text-gray-900">Name</th>
-                          <th className="px-4 py-3 text-left font-semibold text-gray-900">Phone</th>
-                          <th className="px-4 py-3 text-left font-semibold text-gray-900">When</th>
+                          <th className="px-3 sm:px-4 py-3 text-left font-semibold text-gray-900">Name</th>
+                          <th className="px-3 sm:px-4 py-3 text-left font-semibold text-gray-900">Phone</th>
+                          <th className="px-3 sm:px-4 py-3 text-left font-semibold text-gray-900">When</th>
                         </tr>
                       </thead>
                       <tbody>
                         {linkLeads.map(lead => (
                           <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
-                            <td className="px-4 py-3 font-medium text-gray-900">{lead.name}</td>
-                            <td className="px-4 py-3 text-gray-700">{lead.phone}</td>
-                            <td className="px-4 py-3 text-gray-600 text-xs">
+                            <td className="px-3 sm:px-4 py-3 font-medium text-gray-900">{lead.name}</td>
+                            <td className="px-3 sm:px-4 py-3 text-gray-700">{lead.phone}</td>
+                            <td className="px-3 sm:px-4 py-3 text-gray-600 text-xs whitespace-nowrap">
                               {new Date(lead.created_at).toLocaleDateString('en-US', {
                                 month: 'short',
                                 day: 'numeric',

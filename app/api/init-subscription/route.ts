@@ -52,10 +52,9 @@ export async function POST(request: Request) {
     }
 
     // Price table (amounts in smallest currency unit for KES).
-    // TEMPORARY: Early Access reduced to KES 10 for live testing
-    // Production: Early Access: KES 499/month; Standard: KES 999/month.
+    // Early Access: KES 499/month; Standard: KES 999/month.
     const PRICE_MAP: Record<string, number> = {
-      'Early Access': 1000, // KES 10.00 (TEMPORARY FOR TESTING)
+      'Early Access': 49900, // KES 499.00
       Standard: 99900, // KES 999.00
     }
     const amount = PRICE_MAP[planName]

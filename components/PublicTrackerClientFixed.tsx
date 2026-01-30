@@ -64,29 +64,29 @@ export default function PublicTrackerClient({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto px-4 sm:px-0">
       <div className="mb-6 p-4 bg-white/60 backdrop-blur rounded-lg border border-gray-200/50 shadow-sm">
-        <p className="text-sm text-gray-700 leading-relaxed">
+        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
           <span className="font-semibold text-gray-900">We respect your privacy.</span> Your information is secure and will only be used to contact you regarding this request.
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">Connect With Us</h1>
-          <p className="text-gray-600">Tell us a bit about yourself and we&apos;ll be in touch.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Connect With Us</h1>
+          <p className="text-sm sm:text-base text-gray-600">Tell us a bit about yourself and we&apos;ll be in touch.</p>
         </div>
 
         {submitted ? (
           <div className="py-8 text-center space-y-3">
             <div className="text-5xl">✅</div>
-            <p className="text-lg font-semibold text-green-600">Redirecting…</p>
-            <p className="text-gray-600">If you are not redirected, <a href={targetUrl} className="text-blue-600 underline">click here</a>.</p>
+            <p className="text-base sm:text-lg font-semibold text-green-600">Redirecting…</p>
+            <p className="text-sm sm:text-base text-gray-600">If you are not redirected, <a href={targetUrl} className="text-blue-600 underline">click here</a>.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs sm:text-sm">{error}</div>
             )}
 
             <div>
@@ -100,7 +100,7 @@ export default function PublicTrackerClient({
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full px-4 py-3 text-sm sm:text-base rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
 
@@ -115,13 +115,13 @@ export default function PublicTrackerClient({
                 required
                 minLength={7}
                 maxLength={20}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full px-4 py-3 text-sm sm:text-base rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl"
+              className="w-full py-3 px-4 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-shadow"
             >
               View My Website
             </button>
