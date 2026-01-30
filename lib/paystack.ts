@@ -3,11 +3,10 @@ import crypto from 'crypto'
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || ''
 const PAYSTACK_BASE = 'https://api.paystack.co'
 
-// Sandbox-only enforcement: require test secret key prefix.
-// Switching to live keys later is a single env change to sk_live_...
-function assertSandboxKey() {
-  if (!PAYSTACK_SECRET_KEY.startsWith('sk_test_')) {
-    throw new Error('PAYSTACK_SECRET_KEY must be a sandbox (sk_test_) key for testing')
+// Validate that a Paystack key is set (sandbox or live)
+function assertPaystackKey() {
+  if (!PAYSTACK_SECRET_KEY || !PAYSTACK_SECRET_KEY.startsWith('sk_')) {
+    throw new Error('PAYSTACK_SECRET_KEY must be set (sk_test_ for sandbox or sk_live_ for production)')
   }
 }
 
@@ -29,7 +28,7 @@ export async function initializeTransaction(
   metadata: Record<string, unknown> = {},
   currency: 'KES' | 'NGN' = 'KES'
 ): Promise<InitResponse> {
-  assertSandboxKey()
+  assertPaystackKey()
   // Paystack expects amount in the smallest currency unit. For KES, multiply by 100.
   // Caller should pass amount already in smallest unit (e.g. KES 499 => 49900).
   const body: Record<string, unknown> = {
@@ -62,7 +61,7 @@ export async function initializeTransaction(
  * Returns the full Paystack response data object.
  */
 export async function verifyTransaction(reference: string) {
-  assertSandboxKey()
+  assertPaystackKey()
   const res = await fetch(`${PAYSTACK_BASE}/transaction/verify/${encodeURIComponent(reference)}`, {
     method: 'GET',
     headers: {
@@ -80,7 +79,7 @@ export async function verifyTransaction(reference: string) {
  * Verify webhook signature sent by Paystack. Uses HMAC SHA512.
  */
 export function verifyWebhookSignature(rawBody: string, signature?: string) {
-  assertSandboxKey()
+  assertPaystackKey()
   if (!signature) return false
   const hmac = crypto.createHmac('sha512', PAYSTACK_SECRET_KEY)
   hmac.update(rawBody)
