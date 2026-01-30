@@ -56,8 +56,9 @@ export async function GET(request: Request) {
     }
 
     // Redirect user back to dashboard (include a flag so frontend can show success)
-    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    return NextResponse.redirect(`${origin}/dashboard?subscription=success`)
+    // Use NEXT_PUBLIC_APP_URL (set to https://leads.clintonstack.com in production)
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || 'http://localhost:3000'
+    return NextResponse.redirect(`${appUrl}/dashboard?subscription=success`)
   } catch (err) {
     console.error('verify-subscription error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
