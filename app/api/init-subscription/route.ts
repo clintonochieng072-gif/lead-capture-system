@@ -24,8 +24,8 @@ export async function POST(request: Request) {
     // Verify user exists in Supabase
     const { data: profile, error: pErr } = await supabaseAdmin
       .from('profiles')
-      .select('id, email')
-      .eq('id', userId)
+      .select('user_id, email')
+      .eq('user_id', userId)
       .maybeSingle()
     if (pErr) {
       console.error('Supabase lookup error:', pErr)
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     if (planName === 'Early Access') {
       const { data: earlyUsers, error: eErr } = await supabaseAdmin
         .from('profiles')
-        .select('id')
+        .select('user_id')
         .eq('plan', 'Early Access')
         .eq('subscription_active', true)
       if (eErr) {
