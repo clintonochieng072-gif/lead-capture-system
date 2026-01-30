@@ -74,7 +74,7 @@ export default function PublicTrackerClient({
       <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-gray-900">Connect With Us</h1>
-          <p className="text-gray-600">Tell us a bit about yourself and we'll be in touch.</p>
+          <p className="text-gray-600">Tell us a bit about yourself and we&apos;ll be in touch.</p>
         </div>
 
         {submitted ? (

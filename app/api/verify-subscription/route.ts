@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { verifyTransaction } from '../../../../lib/paystack'
-import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
+import { verifyTransaction } from '../../../lib/paystack'
+import { supabaseAdmin } from '../../../lib/supabaseAdmin'
 
 /**
  * GET /api/verify-subscription?reference=...
