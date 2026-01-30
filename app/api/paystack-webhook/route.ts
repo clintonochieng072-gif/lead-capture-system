@@ -48,13 +48,13 @@ export async function POST(request: Request) {
       await supabaseAdmin
         .from('profiles')
         .update({ subscription_active: true, subscription_expires_at: expiresAt })
-        .eq('id', userId)
+        .eq('user_id', userId)
       console.log('Marked subscription active for user', userId)
     } else if (event === 'charge.failed') {
       await supabaseAdmin
         .from('profiles')
         .update({ subscription_active: false })
-        .eq('id', userId)
+        .eq('user_id', userId)
       console.log('Marked subscription failed for user', userId)
     } else {
       // ignore other events for now

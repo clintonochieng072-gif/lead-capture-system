@@ -48,7 +48,7 @@ export async function GET(request: Request) {
     const { error: uErr } = await supabaseAdmin
       .from('profiles')
       .update({ subscription_active: true, subscription_expires_at: expiresAt, plan })
-      .eq('id', userId)
+      .eq('user_id', userId)
 
     if (uErr) {
       console.error('Supabase update error:', uErr)
