@@ -9,13 +9,18 @@ import { createProfile, createDefaultTrackingLink } from '../../../../lib/db.ser
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userId, email, fullName } = body as { userId?: string; email?: string; fullName?: string };
+    const { userId, email, fullName, referrerId } = body as { 
+      userId?: string; 
+      email?: string; 
+      fullName?: string;
+      referrerId?: string;
+    };
 
     if (!userId || !email) {
       return NextResponse.json({ error: 'Missing userId or email' }, { status: 400 });
     }
 
-    const profile = await createProfile(userId, email, fullName);
+    const profile = await createProfile(userId, email, fullName, referrerId);
     if (!profile) {
       return NextResponse.json({ error: 'Failed to create profile' }, { status: 500 });
     }

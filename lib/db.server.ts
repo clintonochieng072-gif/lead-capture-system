@@ -8,17 +8,25 @@ import { supabaseAdmin } from './supabaseAdmin';
 export async function createProfile(
   userId: string,
   email: string,
-  fullName?: string
+  fullName?: string,
+  referrerId?: string
 ) {
+  const profileData: Record<string, any> = {
+    user_id: userId,
+    email,
+    full_name: fullName || email.split('@')[0],
+    updated_at: new Date().toISOString()
+  };
+
+  // Only include referrer_id if provided (don't override existing on returning users)
+  if (referrerId) {
+    profileData.referrer_id = referrerId;
+  }
+
   const { data, error } = await supabaseAdmin
     .from('profiles')
     .upsert(
-      {
-        user_id: userId,
-        email,
-        full_name: fullName || email.split('@')[0],
-        updated_at: new Date().toISOString()
-      },
+      profileData,
       { onConflict: 'user_id' }
     )
     .select()

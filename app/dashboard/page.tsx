@@ -36,15 +36,24 @@ export default function DashboardPage() {
           .maybeSingle();
 
         if (!profile) {
+          // Retrieve referral ID from sessionStorage if it exists
+          const referrerId = typeof window !== 'undefined' ? sessionStorage.getItem('referrer_id') : null;
+          
           await fetch('/api/auth/callback', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               userId: session.user.id,
               email: session.user.email,
-              fullName: session.user.user_metadata?.full_name
+              fullName: session.user.user_metadata?.full_name,
+              referrerId: referrerId || undefined
             })
           });
+
+          // Clear referral ID after use
+          if (referrerId && typeof window !== 'undefined') {
+            sessionStorage.removeItem('referrer_id');
+          }
         }
 
         const paid = Boolean(profile?.has_paid ?? profile?.subscription_active);

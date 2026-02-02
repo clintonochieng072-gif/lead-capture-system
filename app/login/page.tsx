@@ -7,6 +7,17 @@ export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
 
+  React.useEffect(() => {
+    // Capture referral ID from URL query parameter on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (ref) {
+      // Store referral ID in sessionStorage to persist through OAuth flow
+      sessionStorage.setItem('referrer_id', ref);
+      console.log('Captured referral ID:', ref);
+    }
+  }, []);
+
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
