@@ -72,7 +72,7 @@ async function checkUserCommission() {
     }
   } else {
     console.log(`   Found ${notifications.length} notification(s):\n`);
-    notifications.forEach((notif, index) => {
+    notifications.forEach((notif: any, index: number) => {
       console.log(`   [${index + 1}] Status: ${notif.status}`);
       console.log(`       - Referrer ID: ${notif.referrer_id}`);
       console.log(`       - Amount: ${notif.amount}`);
