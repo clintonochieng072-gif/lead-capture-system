@@ -223,24 +223,33 @@ export default function DashboardPage() {
                   </span>
                 </div>
 
-                <div className="mb-4 space-y-3">
+                <div className="space-y-3">
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">Target</p>
-                    <input
-                      type="url"
-                      className="w-full bg-white px-3 py-2 text-xs sm:text-sm rounded border border-gray-300 text-gray-700"
-                      value={link.target_url || ''}
-                      placeholder="https://example.com"
-                      disabled={!hasPaid || syncing}
-                      readOnly
-                    />
+                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">Target URL</p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="url"
+                        className="flex-1 bg-white px-3 py-2 text-xs sm:text-sm rounded border border-gray-300 text-gray-700"
+                        value={link.target_url || ''}
+                        placeholder="https://example.com"
+                        disabled={!hasPaid || syncing}
+                        readOnly
+                      />
+                      <button
+                        onClick={() => handleUpdateTarget(link.id)}
+                        className="btn-primary text-sm whitespace-nowrap"
+                        disabled={!hasPaid || syncing}
+                      >
+                        Set URL
+                      </button>
+                    </div>
                     {/* Explain what the Target URL does for new users */}
                     <p className="mt-1 text-xs text-gray-500">
                       Set your website URL. After a visitor submits their details, they will be redirected to this URL.
                     </p>
                     {!hasPaid && (
                       // Disabled until payment is active to prevent configuring value-delivering features
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-1 text-xs text-red-600">
                         Activate your account to connect your website and start capturing leads.
                       </p>
                     )}
@@ -248,7 +257,7 @@ export default function DashboardPage() {
 
                   {hasPaid && (
                     <div>
-                      <p className="text-xs font-medium text-gray-500 uppercase mb-1">Share</p>
+                      <p className="text-xs font-medium text-gray-500 uppercase mb-1">Share Link</p>
                       <div className="flex flex-col sm:flex-row gap-2">
                         <code className="flex-1 bg-white px-3 py-2 text-xs rounded border border-gray-300 text-gray-700 overflow-x-auto whitespace-nowrap">
                           {typeof window !== 'undefined' ? `${window.location.origin}/t/${link.slug}` : `/t/${link.slug}`}
@@ -260,14 +269,6 @@ export default function DashboardPage() {
                     </div>
                   )}
                 </div>
-
-                <button
-                  onClick={() => handleUpdateTarget(link.id)}
-                  className="btn-primary text-sm w-full sm:w-auto"
-                  disabled={!hasPaid || syncing}
-                >
-                  Set Target URL
-                </button>
               </div>
             ))}
           </div>
