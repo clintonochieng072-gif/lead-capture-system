@@ -9,8 +9,8 @@ type Plan = {
 }
 
 const PLANS: Plan[] = [
-  { name: 'Early Access', priceDisplay: 'KES 499 / month' },
-  { name: 'Standard', priceDisplay: 'KES 999 / month' },
+  { name: 'Early Access', priceDisplay: 'KES 10 / month (TESTING)' },
+  { name: 'Standard', priceDisplay: 'KES 10 / month (TESTING)' },
 ]
 
 export default function SubscriptionPage() {
