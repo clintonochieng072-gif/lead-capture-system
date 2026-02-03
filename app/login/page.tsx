@@ -11,10 +11,13 @@ export default function LoginPage() {
     // Capture referral ID from URL query parameter on page load
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
-    if (ref) {
+    if (ref && ref.trim() !== '') {
       // Store referral ID in sessionStorage to persist through OAuth flow
-      sessionStorage.setItem('referrer_id', ref);
-      console.log('Captured referral ID:', ref);
+      sessionStorage.setItem('referrer_id', ref.trim());
+      console.log('✅ Affiliate referrer ID captured:', ref);
+    } else {
+      // No ref parameter = not an affiliate link
+      console.log('ℹ️ No affiliate referrer - user came directly');
     }
   }, []);
 

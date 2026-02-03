@@ -23,10 +23,13 @@ export default function SubscriptionPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref'); // e.g., ?ref=jWdlBtQzvE
     
-    if (refParam) {
+    if (refParam && refParam.trim() !== '') {
       // Store referrer ID in sessionStorage so it persists through signup
-      sessionStorage.setItem('referrer_id', refParam);
-      console.log('Affiliate referrer ID captured:', refParam);
+      sessionStorage.setItem('referrer_id', refParam.trim());
+      console.log('✅ Affiliate referrer ID captured:', refParam);
+    } else {
+      // No ref parameter = not an affiliate link, don't store anything
+      console.log('ℹ️ No affiliate referrer - user came directly');
     }
   }, []);
 

@@ -220,7 +220,7 @@ export async function shouldNotifyAffiliate(
   }
 
   // Check both conditions
-  const hasReferrer = Boolean(profile.referrer_id);
+  const hasReferrer = Boolean(profile.referrer_id && profile.referrer_id.trim() !== '');
   const isActive = Boolean(profile.subscription_active);
 
   if (!hasReferrer) {

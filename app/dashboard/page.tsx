@@ -39,6 +39,9 @@ export default function DashboardPage() {
           // Retrieve referral ID from sessionStorage if it exists
           const referrerId = typeof window !== 'undefined' ? sessionStorage.getItem('referrer_id') : null;
           
+          // Only pass referrerId if it's a valid non-empty string
+          const validReferrerId = referrerId && referrerId.trim() !== '' ? referrerId.trim() : null;
+          
           await fetch('/api/auth/callback', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -46,12 +49,12 @@ export default function DashboardPage() {
               userId: session.user.id,
               email: session.user.email,
               fullName: session.user.user_metadata?.full_name,
-              referrerId: referrerId || undefined
+              referrerId: validReferrerId || undefined
             })
           });
 
           // Clear referral ID after use
-          if (referrerId && typeof window !== 'undefined') {
+          if (typeof window !== 'undefined') {
             sessionStorage.removeItem('referrer_id');
           }
         }
