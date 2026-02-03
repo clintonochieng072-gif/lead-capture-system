@@ -4,6 +4,7 @@ import { supabaseAdmin } from './supabaseAdmin';
 /**
  * Create or update a profile for a user (server-side only)
  * Uses upsert to avoid duplicate key error on returning users
+ * IMPORTANT: Never overwrites referrer_id if it already exists
  */
 export async function createProfile(
   userId: string,
@@ -11,6 +12,13 @@ export async function createProfile(
   fullName?: string,
   referrerId?: string
 ) {
+  // First, check if profile exists and has a referrer_id
+  const { data: existingProfile } = await supabaseAdmin
+    .from('profiles')
+    .select('user_id, referrer_id')
+    .eq('user_id', userId)
+    .maybeSingle();
+
   const profileData: Record<string, any> = {
     user_id: userId,
     email,
@@ -18,9 +26,13 @@ export async function createProfile(
     updated_at: new Date().toISOString()
   };
 
-  // Only include referrer_id if provided (don't override existing on returning users)
-  if (referrerId) {
+  // RULE: Only set referrer_id if user doesn't already have one
+  // This preserves the FIRST affiliate that referred this user
+  if (referrerId && (!existingProfile || !existingProfile.referrer_id)) {
     profileData.referrer_id = referrerId;
+    console.log(`✅ Setting referrer_id for user ${userId}: ${referrerId}`);
+  } else if (existingProfile?.referrer_id) {
+    console.log(`ℹ️ User ${userId} already has referrer_id: ${existingProfile.referrer_id} - not overwriting`);
   }
 
   const { data, error } = await supabaseAdmin

@@ -1,15 +1,28 @@
 import 'server-only';
 import { supabaseAdmin } from './supabaseAdmin';
 
-const AFFILIATE_API_URL = process.env.AFFILIATE_API_URL || '';
+// Environment-aware affiliate API URL
+const getAffiliateApiUrl = () => {
+  // Use environment variable if set, otherwise determine from NODE_ENV
+  if (process.env.AFFILIATE_API_URL) {
+    return process.env.AFFILIATE_API_URL;
+  }
+  
+  // Default based on environment
+  const isProduction = process.env.NODE_ENV === 'production';
+  return isProduction 
+    ? 'https://affiliate.clintonstack.com/api/award-commission'
+    : 'http://localhost:3001/api/award-commission'; // Local affiliate system
+};
+
+const AFFILIATE_API_URL = getAffiliateApiUrl();
 const AFFILIATE_API_SECRET = process.env.AFFILIATE_API_SECRET || '';
 const MAX_RETRY_ATTEMPTS = 3;
 
+// Updated payload format per requirements
 interface CommissionPayload {
-  referrer_id: string;
-  user_email: string;
-  amount: number;
-  reference: string;
+  affiliate_id: string;  // Changed from referrer_id
+  user_id: string;       // Changed from user_email
 }
 
 interface CommissionNotification {
@@ -82,6 +95,7 @@ async function recordCommissionNotification(
 /**
  * Send commission notification to the Affiliate System
  * Implements retry logic and idempotency checks
+ * Per requirements: Sends affiliate_id and user_id to /api/award-commission
  */
 export async function notifyAffiliateSystem(
   userId: string,
@@ -97,19 +111,20 @@ export async function notifyAffiliateSystem(
     return { success: false, error };
   }
 
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔗 Affiliate API URL: ${AFFILIATE_API_URL}`);
+
   // Check idempotency - has this commission already been sent?
   const alreadyNotified = await hasCommissionBeenNotified(userId, paymentReference);
   if (alreadyNotified) {
-    console.log(`Commission already notified for user ${userId}, reference ${paymentReference}`);
+    console.log(`✅ Commission already notified for user ${userId}, reference ${paymentReference}`);
     return { success: true }; // Already processed, consider it successful
   }
 
-  // Prepare the payload for the Affiliate System
+  // Prepare the payload per requirements
   const payload: CommissionPayload = {
-    referrer_id: referrerId,
-    user_email: userEmail,
-    amount,
-    reference: paymentReference,
+    affiliate_id: referrerId,  // Per requirements
+    user_id: userId,           // Per requirements
   };
 
   let lastError = '';
@@ -118,14 +133,14 @@ export async function notifyAffiliateSystem(
   // Retry loop
   while (retryCount < MAX_RETRY_ATTEMPTS) {
     try {
-      console.log(`Attempting to notify affiliate system (attempt ${retryCount + 1}/${MAX_RETRY_ATTEMPTS})...`);
+      console.log(`📤 Attempting to notify affiliate system (attempt ${retryCount + 1}/${MAX_RETRY_ATTEMPTS})...`);
+      console.log(`📦 Payload:`, JSON.stringify(payload));
       
       const response = await fetch(AFFILIATE_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${AFFILIATE_API_SECRET}`,
-          'X-API-Secret': AFFILIATE_API_SECRET, // Alternative auth header
         },
         body: JSON.stringify(payload),
       });
@@ -145,13 +160,14 @@ export async function notifyAffiliateSystem(
           retry_count: retryCount,
         });
 
-        console.log(`Commission notification sent successfully for user ${userId}`);
+        console.log(`✅ Commission notification sent successfully for user ${userId}`);
+        console.log(`✅ Affiliate ${referrerId} will receive commission`);
         return { success: true };
       }
 
       // Non-OK response
       lastError = `HTTP ${response.status}: ${JSON.stringify(responseData)}`;
-      console.warn(`Affiliate API returned error (attempt ${retryCount + 1}):`, lastError);
+      console.warn(`⚠️ Affiliate API returned error (attempt ${retryCount + 1}):`, lastError);
 
       // For 4xx errors (client errors), don't retry
       if (response.status >= 400 && response.status < 500) {
