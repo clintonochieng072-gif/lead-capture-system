@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyTransaction } from '../../../lib/paystack'
 import { supabaseAdmin } from '../../../lib/supabaseAdmin'
+import { shouldNotifyAffiliate, notifyAffiliateSystem } from '../../../lib/affiliate'
 
 /**
  * GET /api/verify-subscription?reference=...
@@ -53,6 +54,38 @@ export async function GET(request: Request) {
     if (uErr) {
       console.error('Supabase update error:', uErr)
       return NextResponse.json({ error: 'DB error' }, { status: 500 })
+    }
+
+    console.log(`Subscription activated for user ${userId}, plan: ${plan}`)
+
+    // Check if we should notify the Affiliate System
+    const affiliateCheck = await shouldNotifyAffiliate(userId)
+    
+    if (affiliateCheck.should && affiliateCheck.referrerId && affiliateCheck.email) {
+      console.log(`User ${userId} qualifies for affiliate commission - notifying affiliate system...`)
+      
+      // Get payment amount from transaction data
+      const paymentAmount = data.amount || 0
+      
+      // Notify the Affiliate System (runs async with retries)
+      // We don't wait for this to complete to avoid blocking the user redirect
+      notifyAffiliateSystem(
+        userId,
+        affiliateCheck.referrerId,
+        affiliateCheck.email,
+        paymentAmount,
+        reference
+      ).then((result) => {
+        if (result.success) {
+          console.log(`✅ Successfully notified affiliate system for user ${userId}`)
+        } else {
+          console.error(`❌ Failed to notify affiliate system for user ${userId}: ${result.error}`)
+        }
+      }).catch((err) => {
+        console.error(`❌ Error in affiliate notification for user ${userId}:`, err)
+      })
+    } else {
+      console.log(`User ${userId} does not qualify for affiliate commission - skipping notification`)
     }
 
     // Redirect user back to dashboard (include a flag so frontend can show success)
