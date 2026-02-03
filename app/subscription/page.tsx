@@ -19,6 +19,18 @@ export default function SubscriptionPage() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    // Capture affiliate referrer ID from URL on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref'); // e.g., ?ref=jWdlBtQzvE
+    
+    if (refParam) {
+      // Store referrer ID in sessionStorage so it persists through signup
+      sessionStorage.setItem('referrer_id', refParam);
+      console.log('Affiliate referrer ID captured:', refParam);
+    }
+  }, []);
+
+  useEffect(() => {
     // Get authenticated user id
     async function fetchUser() {
       try {

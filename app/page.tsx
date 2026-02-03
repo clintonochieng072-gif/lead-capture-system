@@ -1,8 +1,24 @@
-import React from 'react';
+'use client'
+
+import React, { useEffect } from 'react';
 import HeroCTAs from '../components/HeroCTAs';
 import HeaderCTAs from '../components/HeaderCTAs';
 
 export default function LandingPage() {
+  // Capture affiliate referrer ID from URL on page load
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref'); // e.g., ?ref=jWdlBtQzvE
+    
+    if (refParam) {
+      // Store referrer ID in sessionStorage so it persists through signup
+      sessionStorage.setItem('referrer_id', refParam);
+      console.log('Affiliate referrer ID captured:', refParam);
+    }
+  }, []);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900">
       <header className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
