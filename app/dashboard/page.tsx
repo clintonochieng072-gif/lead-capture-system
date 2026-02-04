@@ -36,11 +36,22 @@ export default function DashboardPage() {
           .maybeSingle();
 
         if (!profile) {
-          // Retrieve referral ID from sessionStorage if it exists
-          const referrerId = typeof window !== 'undefined' ? sessionStorage.getItem('referrer_id') : null;
+          // Get referrer from URL parameter (passed through OAuth redirect)
+          const urlParams = new URLSearchParams(window.location.search);
+          const referrerFromUrl = urlParams.get('ref');
           
-          // Only pass referrerId if it's a valid non-empty string
+          // Fallback to sessionStorage for backwards compatibility
+          const referrerFromStorage = typeof window !== 'undefined' ? sessionStorage.getItem('referrer_id') : null;
+          
+          // Use URL parameter first (most reliable), then fall back to sessionStorage
+          const referrerId = referrerFromUrl || referrerFromStorage;
           const validReferrerId = referrerId && referrerId.trim() !== '' ? referrerId.trim() : null;
+          
+          if (validReferrerId) {
+            console.log('✅ Creating profile with referrer_id:', validReferrerId);
+          } else {
+            console.log('ℹ️  No referrer_id found - direct signup');
+          }
           
           await fetch('/api/auth/callback', {
             method: 'POST',
@@ -53,9 +64,16 @@ export default function DashboardPage() {
             })
           });
 
-          // Clear referral ID after use
+          // Clear referral ID from sessionStorage after use
           if (typeof window !== 'undefined') {
             sessionStorage.removeItem('referrer_id');
+          }
+          
+          // Remove ref parameter from URL (clean up)
+          if (referrerFromUrl) {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('ref');
+            window.history.replaceState({}, '', cleanUrl.toString());
           }
         }
 

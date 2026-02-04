@@ -24,7 +24,18 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      const redirectTo = `${window.location.origin}/dashboard`;
+      
+      // Capture referrer from URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      
+      // Build redirect URL with referrer parameter (pass it through OAuth)
+      let redirectTo = `${window.location.origin}/dashboard`;
+      if (ref && ref.trim() !== '') {
+        redirectTo += `?ref=${encodeURIComponent(ref.trim())}`;
+        console.log('✅ Passing referrer through OAuth:', ref);
+      }
+      
       await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
       // Supabase will redirect the browser; no further action here.
     } catch (err) {

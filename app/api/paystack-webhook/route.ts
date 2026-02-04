@@ -121,9 +121,10 @@ export async function POST(request: Request) {
       if (affiliateCheck.should && affiliateCheck.referrerId && affiliateCheck.email) {
         console.log(`User ${userId} qualifies for affiliate commission - notifying affiliate system...`)
         
-        // Get payment reference and amount from webhook data
+        // Get payment reference from webhook data
         const paymentReference = data.reference || ''
-        const paymentAmount = data.amount || 0
+        // Fixed commission amount: 70 KES (sent as 70, affiliate system interprets as KES)
+        const paymentAmount = 70
         
         // Notify the Affiliate System (runs async with retries)
         // We don't wait for this to complete to avoid blocking the webhook response

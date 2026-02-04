@@ -64,8 +64,8 @@ export async function GET(request: Request) {
     if (affiliateCheck.should && affiliateCheck.referrerId && affiliateCheck.email) {
       console.log(`User ${userId} qualifies for affiliate commission - notifying affiliate system...`)
       
-      // Get payment amount from transaction data
-      const paymentAmount = data.amount || 0
+      // Fixed commission amount: 70 KES (sent as 70, affiliate system interprets as KES)
+      const paymentAmount = 70
       
       // Notify the Affiliate System (runs async with retries)
       // We don't wait for this to complete to avoid blocking the user redirect

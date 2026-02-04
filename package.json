@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reset-users": "tsx scripts/reset-users.ts"
+    "reset-users": "tsx scripts/reset-users.ts",
+    "check-referrer": "tsx scripts/check-referrer.ts",
+    "set-referrer": "tsx scripts/set-referrer.ts",
+    "delete-all-users": "tsx scripts/delete-all-users.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.26.0",
