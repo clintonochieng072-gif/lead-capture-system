@@ -52,10 +52,9 @@ export async function POST(request: Request) {
     }
 
     // Price table (amounts in smallest currency unit for KES).
-    // TESTING: Temporarily set to KES 10 for testing purposes
     const PRICE_MAP: Record<string, number> = {
-      'Early Access': 1000, // KES 10.00 (TESTING)
-      Standard: 1000, // KES 10.00 (TESTING)
+      'Early Access': 49900, // KES 499.00 (special offer for first 10 users)
+      Standard: 99900, // KES 999.00 (normal price)
     }
     const amount = PRICE_MAP[planName]
     if (!amount) {
