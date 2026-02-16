@@ -36,6 +36,7 @@ export default function DashboardPage() {
   const [paying, setPaying] = React.useState(false);
   const [savingLinkId, setSavingLinkId] = React.useState<string | null>(null);
   const [targetInputs, setTargetInputs] = React.useState<Record<string, string>>({});
+  const [showTargetInput, setShowTargetInput] = React.useState(false);
 
   const [notifications, setNotifications] = React.useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = React.useState(0);
@@ -378,7 +379,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 animate-fade-in">
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 animate-fade-in">
         <article className="rounded-2xl border border-[#457B9D]/20 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#457B9D]">Total Leads</p>
           <p className="mt-2 text-4xl font-semibold text-[#1D3557]">{leads.length}</p>
@@ -389,46 +390,50 @@ export default function DashboardPage() {
           <p className="mt-2 text-4xl font-semibold text-[#1D3557]">{leadsThisMonth}</p>
         </article>
 
-        <article className="rounded-2xl border border-[#457B9D]/20 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md md:col-span-2 xl:col-span-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#457B9D]">Smart Link Management</p>
+        <article className="rounded-2xl border border-[#457B9D]/20 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#457B9D]">Set Target URL</p>
 
           {primaryLink ? (
             <>
-              <div className="mt-3 rounded-xl border border-[#457B9D]/15 bg-[#F9FCFF] p-3">
-                <p className="text-xs text-[#333333]/70">Smart Link</p>
-                <p className="mt-1 text-sm font-medium text-[#1D3557] break-all">{smartLinkUrl}</p>
-              </div>
+              {!showTargetInput ? (
+                <button
+                  onClick={() => setShowTargetInput(true)}
+                  className="mt-3 w-full rounded-xl bg-[#1D3557] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#17314f] hover:shadow-md"
+                >
+                  Set Target URL
+                </button>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  <input
+                    type="url"
+                    value={targetInputs[primaryLink.id] || ''}
+                    placeholder="https://example.com"
+                    onChange={(e) =>
+                      setTargetInputs((prev) => ({
+                        ...prev,
+                        [primaryLink.id]: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-[#457B9D]/20 bg-white px-3 py-3 text-sm text-[#333333] focus:border-[#457B9D] focus:outline-none focus:ring-2 focus:ring-[#457B9D]/20"
+                  />
 
-              <div className="mt-3 space-y-2">
-                <input
-                  type="url"
-                  value={targetInputs[primaryLink.id] || ''}
-                  placeholder="https://example.com"
-                  onChange={(e) =>
-                    setTargetInputs((prev) => ({
-                      ...prev,
-                      [primaryLink.id]: e.target.value,
-                    }))
-                  }
-                  className="w-full rounded-xl border border-[#457B9D]/20 bg-white px-3 py-3 text-sm text-[#333333] focus:border-[#457B9D] focus:outline-none focus:ring-2 focus:ring-[#457B9D]/20"
-                />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <button
-                    onClick={() => handleUpdateTarget(primaryLink.id)}
-                    disabled={savingLinkId === primaryLink.id}
-                    className="rounded-xl bg-[#1D3557] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#17314f] hover:shadow-md disabled:opacity-60"
-                  >
-                    {savingLinkId === primaryLink.id ? 'Saving…' : 'Set Target URL'}
-                  </button>
-                  <button
-                    onClick={() => copyToClipboard(smartLinkUrl)}
-                    className="rounded-xl bg-[#457B9D] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#3d6d8b] hover:shadow-md"
-                  >
-                    Copy Smart Link
-                  </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleUpdateTarget(primaryLink.id)}
+                      disabled={savingLinkId === primaryLink.id}
+                      className="rounded-xl bg-[#1D3557] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#17314f] hover:shadow-md disabled:opacity-60"
+                    >
+                      {savingLinkId === primaryLink.id ? 'Saving…' : 'Save URL'}
+                    </button>
+                    <button
+                      onClick={() => setShowTargetInput(false)}
+                      className="rounded-xl bg-[#457B9D]/15 px-4 py-3 text-sm font-semibold text-[#1D3557] transition-all hover:bg-[#457B9D]/25"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           ) : (
             <p className="mt-3 text-sm text-[#333333]/70">No smart link found yet.</p>
@@ -446,6 +451,28 @@ export default function DashboardPage() {
               />
             </div>
           </div>
+        </article>
+
+        <article className="rounded-2xl border border-[#457B9D]/20 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#457B9D]">Copy Smart Link</p>
+
+          {primaryLink ? (
+            <>
+              <div className="mt-3 rounded-xl border border-[#457B9D]/15 bg-[#F9FCFF] p-3">
+                <p className="text-xs text-[#333333]/70">Smart Link</p>
+                <p className="mt-1 text-sm font-medium text-[#1D3557] break-all">{smartLinkUrl}</p>
+              </div>
+
+              <button
+                onClick={() => copyToClipboard(smartLinkUrl)}
+                className="mt-3 w-full rounded-xl bg-[#457B9D] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#3d6d8b] hover:shadow-md"
+              >
+                Copy Smart Link
+              </button>
+            </>
+          ) : (
+            <p className="mt-3 text-sm text-[#333333]/70">No smart link found yet.</p>
+          )}
         </article>
       </section>
 
