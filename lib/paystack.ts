@@ -26,8 +26,7 @@ export async function initializeTransaction(
   amount: number,
   callback_url: string,
   metadata: Record<string, unknown> = {},
-  currency: 'KES' | 'NGN' = 'KES',
-  planCode?: string
+  currency: 'KES' | 'NGN' = 'KES'
 ): Promise<InitResponse> {
   assertPaystackKey()
   // Paystack expects amount in the smallest currency unit. For KES, multiply by 100.
@@ -40,7 +39,6 @@ export async function initializeTransaction(
   }
   // include currency when provided (Paystack supports currency param)
   if (currency) body.currency = currency
-  if (planCode) body.plan = planCode
 
   const res = await fetch(`${PAYSTACK_BASE}/transaction/initialize`, {
     method: 'POST',

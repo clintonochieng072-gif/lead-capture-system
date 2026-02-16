@@ -32,7 +32,6 @@ export default function DashboardPage() {
   const [leads, setLeads] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
-  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
   const [paying, setPaying] = React.useState(false);
   const [savingLinkId, setSavingLinkId] = React.useState<string | null>(null);
   const [targetInputs, setTargetInputs] = React.useState<Record<string, string>>({});
@@ -155,9 +154,6 @@ export default function DashboardPage() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('subscription') === 'success') {
       refreshDashboard();
-    }
-    if (params.get('upgrade') === '1') {
-      setShowPaymentModal(true);
     }
   }, [refreshDashboard]);
 
@@ -481,10 +477,11 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold text-[#1D3557]">Lead Capture Table</h2>
           {!subscriptionActive && (
             <button
-              onClick={() => setShowPaymentModal(true)}
-              className="rounded-xl bg-[#457B9D] px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#3d6d8b] hover:shadow-md"
+              onClick={handleUpgrade}
+              disabled={paying}
+              className="rounded-xl bg-[#457B9D] px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#3d6d8b] hover:shadow-md disabled:opacity-60"
             >
-              Upgrade
+              {paying ? 'Processing…' : 'Upgrade'}
             </button>
           )}
         </div>
@@ -524,34 +521,6 @@ export default function DashboardPage() {
         )}
       </section>
 
-      {showPaymentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-[#457B9D]/20 bg-white p-4 sm:p-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg sm:text-xl font-semibold text-[#1D3557]">Upgrade Subscription</h3>
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="rounded-lg p-1 text-[#333333]/60 hover:bg-[#457B9D]/10 hover:text-[#1D3557]"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="rounded-xl border border-[#457B9D]/20 bg-[#F7FAFD] p-4">
-              <h4 className="text-base sm:text-lg font-semibold text-[#1D3557]">Monthly Plan</h4>
-              <p className="mt-1 text-sm text-[#333333]/80">KES 999 / month</p>
-              <p className="mt-2 text-xs text-[#333333]/70">Unlock full lead visibility and unlimited lead capture.</p>
-              <button
-                className="mt-4 w-full rounded-xl bg-[#1D3557] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#17314f] hover:shadow-md disabled:opacity-60"
-                onClick={handleUpgrade}
-                disabled={paying}
-              >
-                {paying ? 'Processing…' : 'Upgrade Now'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

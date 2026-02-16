@@ -33,14 +33,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const monthlyPlanCode = process.env.PAYSTACK_MONTHLY_PLAN_CODE
-    if (!monthlyPlanCode) {
-      return NextResponse.json(
-        { error: 'PAYSTACK_MONTHLY_PLAN_CODE is not configured' },
-        { status: 500 }
-      )
-    }
-
     const amount = 99900
 
     // Determine callback URL (Paystack will redirect user here with ?reference=...)
@@ -56,8 +48,7 @@ export async function POST(request: Request) {
         user_id: userId,
         plan: 'Standard',
       },
-      'KES',
-      monthlyPlanCode
+      'KES'
     )
 
     return NextResponse.json({ authorization_url: init.authorization_url })
