@@ -2,39 +2,16 @@
 
 import React from 'react';
 import Link from 'next/link';
-import supabaseClient from '../lib/supabaseClient';
 
 export default function HeaderCTAs() {
-  const [loading, setLoading] = React.useState(false);
-
-  const handleGoogleSignup = async () => {
-    try {
-      setLoading(true);
-      const redirectTo = `${window.location.origin}/dashboard`;
-      await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
-    } catch (err) {
-      console.error('OAuth error', err);
-      setLoading(false);
-      alert('Failed to start Google sign-up.');
-    }
-  };
-
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center">
       <Link 
-        href="/login" 
-        className="text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+        href="/login"
+        className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
       >
-        Login
+        Sign In
       </Link>
-
-      <button
-        onClick={handleGoogleSignup}
-        disabled={loading}
-        className="text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md transition disabled:opacity-50"
-      >
-        {loading ? 'Signing in…' : 'Continue with Google'}
-      </button>
     </div>
   );
 }

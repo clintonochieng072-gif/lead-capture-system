@@ -2,39 +2,16 @@
 
 import React from 'react';
 import Link from 'next/link';
-import supabaseClient from '../lib/supabaseClient';
 
 export default function HeroCTAs() {
-  const [loading, setLoading] = React.useState(false);
-
-  const handleGoogleSignup = async () => {
-    try {
-      setLoading(true);
-      const redirectTo = `${window.location.origin}/dashboard`;
-      await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
-    } catch (err) {
-      console.error('OAuth error', err);
-      setLoading(false);
-      alert('Failed to start Google sign-up.');
-    }
-  };
-
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <div className="flex items-center">
       <Link 
         href="/login" 
-        className="inline-block px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 text-white shadow-lg hover:bg-blue-600 hover:shadow-xl transition"
+        className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-7 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
       >
-        Login
+        Sign In
       </Link>
-
-      <button
-        onClick={handleGoogleSignup}
-        disabled={loading}
-        className="inline-block px-6 py-3 rounded-lg text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl hover:scale-105 transition disabled:opacity-50"
-      >
-        {loading ? 'Redirecting…' : 'Get Started for Free'}
-      </button>
     </div>
   );
 }
