@@ -161,13 +161,58 @@ export default function DashboardPage() {
     if (!user?.id || !accessToken) return;
 
     const interval = setInterval(async () => {
-      const latestLeads = await getUserLeads(user.id);
-      setLeads(latestLeads);
       await fetchNotifications(accessToken);
     }, 20000);
 
     return () => clearInterval(interval);
   }, [accessToken, fetchNotifications, user?.id]);
+
+  React.useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabaseClient
+      .channel(`dashboard-leads-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'leads',
+          filter: `owner_user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const newLead = payload.new as any;
+
+          setLeads((prev) => {
+            if (prev.some((lead) => lead.id === newLead.id)) {
+              return prev;
+            }
+            return [newLead, ...prev];
+          });
+
+          const leadName = String(newLead?.name || '').trim();
+          const safeName = leadName || 'A visitor';
+          const notificationMessage = `${safeName} is interested in your products`;
+
+          setNotifications((prev) => [
+            {
+              id: `live-${newLead.id}`,
+              message: notificationMessage,
+              is_read: false,
+              created_at: newLead.created_at || new Date().toISOString(),
+            },
+            ...prev,
+          ].slice(0, 50));
+
+          setUnreadCount((current) => current + 1);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabaseClient.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   const handleUpgrade = async () => {
     if (!user?.id) return;
@@ -293,7 +338,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-5 sm:space-y-6 px-4 sm:px-0 text-[#333333]">
       <header className="rounded-2xl bg-white border border-[#457B9D]/15 shadow-sm p-4 sm:p-6 animate-fade-in">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
           <div>
             <p className="text-sm text-[#457B9D] font-medium">Dashboard</p>
             <h1 className="mt-1 text-2xl sm:text-3xl font-semibold tracking-tight text-[#1D3557]">
@@ -301,20 +346,20 @@ export default function DashboardPage() {
             </h1>
           </div>
 
-          <div className="relative flex items-center gap-2">
+          <div className="relative flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => {
                 setShowNotifications((prev) => !prev);
                 setShowProfileMenu(false);
               }}
-              className="relative h-11 w-11 rounded-xl border border-[#457B9D]/20 bg-white text-[#1D3557] shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#457B9D]/20 bg-white text-[#1D3557] shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md md:h-12 md:w-12"
               aria-label="Notifications"
             >
-              <svg className="mx-auto h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <svg className="h-5 w-5 md:h-[22px] md:w-[22px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {unreadCount > 0 && (
-                <span className="absolute -right-1 -top-1 inline-flex min-w-[20px] items-center justify-center rounded-full bg-[#457B9D] px-1.5 py-0.5 text-[11px] font-semibold text-white">
+                <span className="absolute -right-1 -top-1 inline-flex min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
                   {unreadCount}
                 </span>
               )}
@@ -325,7 +370,7 @@ export default function DashboardPage() {
                 setShowProfileMenu((prev) => !prev);
                 setShowNotifications(false);
               }}
-              className="h-11 w-11 rounded-xl bg-[#1D3557] text-white text-xs font-bold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1D3557] text-white text-xs font-bold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               aria-label="Profile"
             >
               {profileInitials}
