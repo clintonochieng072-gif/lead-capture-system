@@ -105,12 +105,25 @@ export async function POST(request: Request) {
     }
 
     if (event === 'charge.success') {
+      const { data: existingProfile } = await supabaseAdmin
+        .from('profiles')
+        .select('subscription_started_at')
+        .eq('user_id', userId)
+        .maybeSingle()
+
+      const nowIso = new Date().toISOString()
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       
       // Activate the user's subscription
       await supabaseAdmin
         .from('profiles')
-        .update({ subscription_active: true, subscription_expires_at: expiresAt })
+        .update({
+          subscription_active: true,
+          subscription_expires_at: expiresAt,
+          subscription_started_at: existingProfile?.subscription_started_at || nowIso,
+          subscription_last_payment_at: nowIso,
+          plan: 'Standard',
+        })
         .eq('user_id', userId)
       
       console.log('Marked subscription active for user', userId)

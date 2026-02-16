@@ -91,6 +91,56 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
       );
     }
 
+    const { data: ownerProfile, error: profileErr } = await supabaseAdmin
+      .from('profiles')
+      .select('subscription_active, subscription_expires_at')
+      .eq('user_id', linkData.owner_user_id)
+      .maybeSingle();
+
+    if (profileErr) {
+      console.error('Profile lookup error:', profileErr);
+      return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const now = Date.now();
+    const subscriptionExpiresAt = ownerProfile?.subscription_expires_at
+      ? new Date(ownerProfile.subscription_expires_at).getTime()
+      : 0;
+    const hasActiveSubscription = Boolean(
+      ownerProfile?.subscription_active && subscriptionExpiresAt > now
+    );
+
+    if (!hasActiveSubscription) {
+      const { count: leadCount, error: leadCountErr } = await supabaseAdmin
+        .from('leads')
+        .select('id', { count: 'exact', head: true })
+        .eq('owner_user_id', linkData.owner_user_id);
+
+      if (leadCountErr) {
+        console.error('Lead count error:', leadCountErr);
+        return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      if ((leadCount || 0) >= 10) {
+        return new Response(
+          JSON.stringify({
+            code: 'free_limit_reached',
+            message: 'You have reached your free lead capture limit. Upgrade for unlimited leads.'
+          }),
+          {
+            status: 403,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      }
+    }
+
     // Collect metadata
     const metadata: any = {
       user_agent: req.headers.get('user-agent') || null,
@@ -122,6 +172,16 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
+
+    await supabaseAdmin
+      .from('notifications')
+      .insert([
+        {
+          owner_user_id: linkData.owner_user_id,
+          lead_id: leadData.id,
+          message: 'You have a visitor to your website.'
+        }
+      ]);
 
     // Return success with target URL (client will redirect)
     return new Response(

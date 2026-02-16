@@ -13,31 +13,13 @@ export default function PublicTrackerClient({
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [lockedMessage, setLockedMessage] = useState('');
 
-  const postLeadInBackground = (payload: Record<string, any>) => {
-    try {
-      const url = `/api/track/${slug}`;
-      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-      const ok = navigator.sendBeacon(url, blob);
-      if (!ok) {
-        fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(() => {});
-      }
-    } catch (err) {
-      fetch(`/api/track/${slug}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(() => {});
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLockedMessage('');
 
     const trimmedName = (name || '').trim();
     const trimmedPhone = (phone || '').trim();
@@ -53,13 +35,34 @@ export default function PublicTrackerClient({
 
     const payload = { name: trimmedName, phone: trimmedPhone };
 
-    postLeadInBackground(payload);
-    setSubmitted(true);
-
+    setSubmitting(true);
     try {
-      window.location.href = targetUrl;
-    } catch (err) {
-      window.open(targetUrl, '_blank');
+      const res = await fetch(`/api/track/${slug}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        if (res.status === 403 && json?.code === 'free_limit_reached') {
+          setLockedMessage(
+            json?.message || 'You have reached your free lead capture limit. Upgrade for unlimited leads.'
+          );
+          return;
+        }
+        setError(json?.error || 'Unable to submit right now. Please try again.');
+        return;
+      }
+
+      const redirectUrl = json?.target_url || targetUrl;
+      setSubmitted(true);
+      window.location.href = redirectUrl;
+    } catch {
+      setError('Unable to submit right now. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -77,7 +80,16 @@ export default function PublicTrackerClient({
           <p className="text-sm sm:text-base text-gray-600">Tell us a bit about yourself and we&apos;ll be in touch.</p>
         </div>
 
-        {submitted ? (
+        {lockedMessage ? (
+          <div className="py-4 text-center space-y-3">
+            <div className="text-5xl">🔒</div>
+            <p className="text-base sm:text-lg font-semibold text-gray-900">Lead Capture Locked</p>
+            <p className="text-sm sm:text-base text-gray-600">{lockedMessage}</p>
+            <a href="/dashboard?upgrade=1" className="inline-block btn-primary text-sm sm:text-base">
+              Upgrade
+            </a>
+          </div>
+        ) : submitted ? (
           <div className="py-8 text-center space-y-3">
             <div className="text-5xl">✅</div>
             <p className="text-base sm:text-lg font-semibold text-green-600">Redirecting…</p>
@@ -121,9 +133,10 @@ export default function PublicTrackerClient({
 
             <button
               type="submit"
+              disabled={submitting}
               className="w-full py-3 px-4 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-shadow"
             >
-              View My Website
+              {submitting ? 'Submitting…' : 'View My Website'}
             </button>
           </form>
         )}

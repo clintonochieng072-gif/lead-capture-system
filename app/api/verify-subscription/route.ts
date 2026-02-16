@@ -43,12 +43,30 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Missing metadata.user_id' }, { status: 400 })
     }
 
-    // Activate subscription: here we set expiry to 30 days from now (monthly)
+    const { data: existingProfile, error: existingProfileErr } = await supabaseAdmin
+      .from('profiles')
+      .select('subscription_started_at')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (existingProfileErr) {
+      console.error('Supabase profile read error:', existingProfileErr)
+      return NextResponse.json({ error: 'DB error' }, { status: 500 })
+    }
+
+    const nowIso = new Date().toISOString()
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const startedAt = existingProfile?.subscription_started_at || nowIso
 
     const { error: uErr } = await supabaseAdmin
       .from('profiles')
-      .update({ subscription_active: true, subscription_expires_at: expiresAt, plan })
+      .update({
+        subscription_active: true,
+        subscription_expires_at: expiresAt,
+        subscription_started_at: startedAt,
+        subscription_last_payment_at: nowIso,
+        plan,
+      })
       .eq('user_id', userId)
 
     if (uErr) {
