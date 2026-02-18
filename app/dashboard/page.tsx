@@ -306,6 +306,8 @@ export default function DashboardPage() {
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there';
   const freeLimitReached = !subscriptionActive && leads.length >= FREE_LEAD_LIMIT;
+  const displayedLeads = subscriptionActive ? leads : leads.slice(0, FREE_LEAD_LIMIT);
+  const showUpgradeOverlay = freeLimitReached && displayedLeads.length > 0;
   const leadsThisMonth = leads.filter((lead) => {
     const date = new Date(lead.created_at);
     const now = new Date();
@@ -531,37 +533,57 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {freeLimitReached ? (
-          <div className="rounded-xl border border-[#457B9D]/20 bg-[#F8FBFE] p-6 text-center">
-            <p className="text-sm sm:text-base text-[#333333]">Leads are being captured. Upgrade to view details.</p>
-          </div>
-        ) : leads.length === 0 ? (
+        {displayedLeads.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-[#457B9D]/20 p-8 text-center text-sm text-[#333333]/70">
             No leads yet. Share your smart link to start capturing interest.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-[#457B9D]/20 shadow-sm">
-            <table className="w-full min-w-[620px] text-sm">
+          <div className="relative">
+            <div className={`overflow-x-auto rounded-xl border border-[#457B9D]/20 shadow-sm ${showUpgradeOverlay ? 'pointer-events-none blur-[1.5px]' : ''}`}>
+              <table className="w-full min-w-[680px] text-sm">
               <thead className="bg-[#1D3557] text-white">
                 <tr>
+                  <th className="px-4 py-3 text-left font-semibold w-16">#</th>
                   <th className="px-4 py-3 text-left font-semibold">Name</th>
                   <th className="px-4 py-3 text-left font-semibold">Phone</th>
                   <th className="px-4 py-3 text-left font-semibold">Captured</th>
                 </tr>
               </thead>
               <tbody>
-                {leads.map((lead: any, index: number) => (
+                {displayedLeads.map((lead: any, index: number) => (
                   <tr
                     key={lead.id}
                     className={`transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-[#F7FAFD]'} hover:bg-[#EAF3FA]`}
                   >
+                    <td className="px-4 py-3.5 font-semibold text-[#1D3557]">{index + 1}</td>
                     <td className="px-4 py-3.5 font-medium text-[#1D3557]">{lead.name}</td>
                     <td className="px-4 py-3.5 text-[#333333]">{lead.phone}</td>
                     <td className="px-4 py-3.5 text-[#333333]/80 whitespace-nowrap">{formatTime(lead.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+              </table>
+            </div>
+
+            {showUpgradeOverlay && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-[#1D3557]/45 p-4">
+                <div className="w-full max-w-lg rounded-2xl border border-[#457B9D]/30 bg-white p-6 text-center shadow-2xl">
+                  <p className="text-base sm:text-lg font-semibold text-[#1D3557]">
+                    You’ve reached your free plan limit. Upgrade to view all leads and capture more.
+                  </p>
+                  <p className="mt-2 text-sm text-[#333333]/80">
+                    You can currently view your first {FREE_LEAD_LIMIT} leads. Upgrade to unlock full lead history.
+                  </p>
+                  <button
+                    onClick={handleUpgrade}
+                    disabled={paying}
+                    className="mt-5 inline-flex items-center justify-center rounded-xl bg-[#457B9D] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#3d6d8b] hover:shadow-md disabled:opacity-60"
+                  >
+                    {paying ? 'Processing…' : 'Upgrade'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>
