@@ -12,7 +12,7 @@ type NotificationItem = {
   created_at: string;
 };
 
-const FREE_LEAD_LIMIT = 10;
+const FREE_LEAD_LIMIT = 5;
 
 const formatTime = (value: string) =>
   new Date(value).toLocaleDateString('en-US', {

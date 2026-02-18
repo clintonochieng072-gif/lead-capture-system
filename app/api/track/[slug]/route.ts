@@ -127,7 +127,7 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
         });
       }
 
-      if ((leadCount || 0) >= 10) {
+      if ((leadCount || 0) >= 5) {
         return new Response(
           JSON.stringify({
             code: 'free_limit_reached',

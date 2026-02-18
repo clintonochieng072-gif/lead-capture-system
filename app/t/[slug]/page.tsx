@@ -90,7 +90,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         );
       }
 
-      if ((leadCount || 0) >= 10) {
+      if ((leadCount || 0) >= 5) {
         return (
           <div className="max-w-xl mx-auto p-8 bg-white rounded-lg shadow text-center space-y-3">
             <h2 className="text-lg font-semibold">Lead Capture Locked</h2>
