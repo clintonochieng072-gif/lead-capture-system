@@ -384,10 +384,10 @@ export default function DashboardPage() {
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there';
   const isProfessional = subscriptionActive && currentPlan === 'Professional';
+  const isFreeTier = !subscriptionActive;
   const planLeadLimit = isProfessional ? Number.POSITIVE_INFINITY : INDIVIDUAL_LEAD_LIMIT;
-  const leadLimitReached = !isProfessional && leads.length > NON_PRO_VISIBLE_LEADS;
-  const displayedLeads = isProfessional ? leads : leads.slice(0, NON_PRO_VISIBLE_LEADS);
-  const showUpgradeOverlay = leadLimitReached && displayedLeads.length > 0;
+  const leadLimitReached = isFreeTier && leads.length > NON_PRO_VISIBLE_LEADS;
+  const displayedLeads = leads;
   const leadsThisMonth = leads.filter((lead) => {
     const date = new Date(lead.created_at);
     const now = new Date();
@@ -683,10 +683,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="relative">
-            <div className={`overflow-x-auto rounded-xl border border-[#457B9D]/20 shadow-sm ${showUpgradeOverlay ? 'pointer-events-none blur-[1.5px]' : ''}`}>
+            <div className="overflow-x-auto rounded-xl border border-[#457B9D]/20 shadow-sm">
               <table className="w-full min-w-[760px] text-sm">
               <thead className="bg-[#1D3557] text-white">
                 <tr>
+                  <th className="px-4 py-3 text-left font-semibold w-16">#</th>
                   <th className="px-4 py-3 text-left font-semibold">Name</th>
                   <th className="px-4 py-3 text-left font-semibold">Phone</th>
                   <th className="px-4 py-3 text-left font-semibold">Source</th>
@@ -695,7 +696,10 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredLeads.map((lead: any, index: number) => (
+                {filteredLeads.map((lead: any, index: number) => {
+                  const isContactLocked = isFreeTier && index >= NON_PRO_VISIBLE_LEADS;
+
+                  return (
                   <tr
                     key={lead.id}
                     className={`transition-colors ${
@@ -706,6 +710,7 @@ export default function DashboardPage() {
                         : 'bg-[#F7FAFD]'
                     } hover:bg-[#EAF3FA]`}
                   >
+                    <td className="px-4 py-3.5 font-semibold text-[#1D3557]">{index + 1}</td>
                     <td className="px-4 py-3.5 font-medium text-[#1D3557]">
                       <div className="flex items-center gap-2">
                         <span>{lead.name}</span>
@@ -717,9 +722,26 @@ export default function DashboardPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-[#333333]">
-                      <a href={`tel:${lead.phone}`} className="font-medium text-[#1D3557] underline decoration-[#457B9D]/40 underline-offset-2">
-                        {lead.phone}
-                      </a>
+                      {isContactLocked ? (
+                        <div className="relative max-w-[260px]">
+                          <div className="select-none blur-[3px]">
+                            <p className="font-medium text-[#1D3557]">+2547*******</p>
+                            {lead.email && <p className="text-xs text-[#333333]/70">hidden@email.com</p>}
+                          </div>
+                          <div className="absolute inset-0 flex items-center justify-start">
+                            <span className="rounded-md bg-[#1D3557]/90 px-2 py-1 text-[10px] font-semibold text-white">
+                              Upgrade to view contact details for new leads!
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <a href={`tel:${lead.phone}`} className="font-medium text-[#1D3557] underline decoration-[#457B9D]/40 underline-offset-2">
+                            {lead.phone}
+                          </a>
+                          {lead.email && <p className="text-xs text-[#333333]/70 mt-0.5">{lead.email}</p>}
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3.5 text-[#333333]/90">
                       {isProfessional ? normalizeSource(lead) : 'Upgrade to view source'}
@@ -738,51 +760,49 @@ export default function DashboardPage() {
                       </select>
                     </td>
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-2">
-                        <a
-                          href={`tel:${lead.phone}`}
-                          className="inline-flex items-center justify-center rounded-lg bg-[#1D3557] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#17314f]"
-                        >
-                          Call
-                        </a>
-                        <a
-                          href={`https://wa.me/${formatPhoneForWhatsApp(lead.phone)}?text=${encodeURIComponent(`Hi ${lead.name}, thanks for your interest.`)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#1fae53]"
-                        >
-                          WhatsApp
-                        </a>
-                      </div>
+                      {isContactLocked ? (
+                        <div className="flex items-center gap-2 opacity-50 blur-[1px]">
+                          <span className="inline-flex items-center justify-center rounded-lg bg-[#1D3557] px-2.5 py-1.5 text-xs font-semibold text-white">
+                            Call
+                          </span>
+                          <span className="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-2.5 py-1.5 text-xs font-semibold text-white">
+                            WhatsApp
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={`tel:${lead.phone}`}
+                            className="inline-flex items-center justify-center rounded-lg bg-[#1D3557] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#17314f]"
+                          >
+                            Call
+                          </a>
+                          <a
+                            href={`https://wa.me/${formatPhoneForWhatsApp(lead.phone)}?text=${encodeURIComponent(`Hi ${lead.name}, thanks for your interest.`)}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-[#1fae53]"
+                          >
+                            WhatsApp
+                          </a>
+                        </div>
+                      )}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
               </table>
             </div>
-
-            {showUpgradeOverlay && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-[#1D3557]/45 p-4">
-                <div className="w-full max-w-lg rounded-2xl border border-[#457B9D]/30 bg-white p-6 text-center shadow-2xl">
-                  <p className="text-base sm:text-lg font-semibold text-[#1D3557]">
-                    Upgrade to view new leads!
-                  </p>
-                  <p className="mt-2 text-sm text-[#333333]/80">
-                    You can currently view your first {NON_PRO_VISIBLE_LEADS} leads. Upgrade to Professional to unlock full lead history and source insights.
-                  </p>
-                  <button
-                    onClick={() => setShowPricingModal(true)}
-                    disabled={paying}
-                    className="mt-5 inline-flex items-center justify-center rounded-xl bg-[#457B9D] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#3d6d8b] hover:shadow-md disabled:opacity-60"
-                  >
-                    {paying ? 'Processing…' : 'Upgrade'}
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </section>
+
+      {leadLimitReached && (
+        <div className="rounded-xl border border-[#457B9D]/20 bg-[#F7FAFD] px-4 py-3 text-sm text-[#1D3557]">
+          You can see all lead names. Upgrade to view contact details for new leads after your first {NON_PRO_VISIBLE_LEADS}.
+        </div>
+      )}
 
       {isProfessional && (
         <section className="rounded-2xl border border-[#457B9D]/20 bg-white p-4 sm:p-5 shadow-sm animate-fade-in">
