@@ -14,6 +14,7 @@ type NotificationItem = {
 };
 
 const INDIVIDUAL_LEAD_LIMIT = 50;
+const NON_PRO_VISIBLE_LEADS = 5;
 const STATUS_OPTIONS = ['New', 'Contacted', 'Negotiating', 'Closed'] as const;
 
 type LeadStatus = (typeof STATUS_OPTIONS)[number];
@@ -384,8 +385,8 @@ export default function DashboardPage() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there';
   const isProfessional = subscriptionActive && currentPlan === 'Professional';
   const planLeadLimit = isProfessional ? Number.POSITIVE_INFINITY : INDIVIDUAL_LEAD_LIMIT;
-  const leadLimitReached = !isProfessional && leads.length >= INDIVIDUAL_LEAD_LIMIT;
-  const displayedLeads = isProfessional ? leads : leads.slice(0, INDIVIDUAL_LEAD_LIMIT);
+  const leadLimitReached = !isProfessional && leads.length > NON_PRO_VISIBLE_LEADS;
+  const displayedLeads = isProfessional ? leads : leads.slice(0, NON_PRO_VISIBLE_LEADS);
   const showUpgradeOverlay = leadLimitReached && displayedLeads.length > 0;
   const leadsThisMonth = leads.filter((lead) => {
     const date = new Date(lead.created_at);
@@ -764,10 +765,10 @@ export default function DashboardPage() {
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-[#1D3557]/45 p-4">
                 <div className="w-full max-w-lg rounded-2xl border border-[#457B9D]/30 bg-white p-6 text-center shadow-2xl">
                   <p className="text-base sm:text-lg font-semibold text-[#1D3557]">
-                    You’ve reached your Individual plan limit. Upgrade to Professional for unlimited leads.
+                    Upgrade to view new leads!
                   </p>
                   <p className="mt-2 text-sm text-[#333333]/80">
-                    You can currently view your first {INDIVIDUAL_LEAD_LIMIT} leads. Upgrade to unlock unlimited lead capture and source insights.
+                    You can currently view your first {NON_PRO_VISIBLE_LEADS} leads. Upgrade to Professional to unlock full lead history and source insights.
                   </p>
                   <button
                     onClick={() => setShowPricingModal(true)}

@@ -24,11 +24,10 @@ const plans: {
     priceUsd: '$29/month',
     priceKes: '~3,700 KES',
     features: [
-      'Capture up to 50 leads every month and keep your outreach predictable.',
+      'Capture up to 50 leads per month.',
       'Generate smart links instantly so prospects can reach you faster.',
       'Use a clean dashboard with essential analytics to stay focused.',
-      'Know where most of your customers come from to save time.',
-      'Focus your marketing energy on the platforms that perform.',
+      'Upgrade to view sources and unlock deeper lead insights.',
     ],
   },
   {
@@ -37,11 +36,10 @@ const plans: {
     priceKes: '~7,600 KES',
     badge: 'Most Popular',
     features: [
-      'Capture unlimited leads with no ceiling as your campaigns grow.',
-      'Track lead source in real time with cumulative platform insights.',
-      'Get instant dashboard notifications so every lead gets quick follow-up.',
-      'Instant notifications help you never miss a lead.',
-      'See top-performing channels and double down on what works.',
+      'Capture unlimited leads as your campaigns grow.',
+      'See where your clients come from (Facebook, WhatsApp, Instagram, YouTube, Email).',
+      'Get instant dashboard notifications so you never miss a lead.',
+      'Highlight top-performing platforms so you can focus your marketing energy.',
     ],
   },
 ];
