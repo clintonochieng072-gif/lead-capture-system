@@ -2,6 +2,35 @@
 
 import React, { useState } from 'react';
 
+const detectLeadSource = () => {
+  if (typeof window === 'undefined') return '';
+
+  const params = new URLSearchParams(window.location.search);
+  const explicitSource =
+    params.get('source') ||
+    params.get('utm_source') ||
+    params.get('src') ||
+    params.get('platform') ||
+    '';
+
+  const candidate = String(explicitSource || document.referrer || '').trim().toLowerCase();
+  if (!candidate) return '';
+
+  if (candidate.includes('facebook') || candidate.includes('fb.')) return 'Facebook';
+  if (candidate.includes('whatsapp') || candidate.includes('wa.me')) return 'WhatsApp';
+  if (candidate.includes('instagram') || candidate.includes('insta')) return 'Instagram';
+  if (candidate.includes('youtube') || candidate.includes('youtu')) return 'YouTube';
+  if (candidate.includes('tiktok') || candidate.includes('tik tok')) return 'TikTok';
+  if (candidate.includes('email') || candidate.includes('mail')) return 'Email';
+
+  if (explicitSource) {
+    const clean = explicitSource.replace(/[-_]/g, ' ').trim();
+    return clean ? clean.charAt(0).toUpperCase() + clean.slice(1) : '';
+  }
+
+  return '';
+};
+
 export default function PublicTrackerClient({
   slug,
   targetUrl
@@ -33,7 +62,7 @@ export default function PublicTrackerClient({
       return;
     }
 
-    const payload = { name: trimmedName, phone: trimmedPhone };
+    const payload = { name: trimmedName, phone: trimmedPhone, source: detectLeadSource() };
 
     setSubmitting(true);
     try {
@@ -46,7 +75,7 @@ export default function PublicTrackerClient({
       const json = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        if (res.status === 403 && json?.code === 'free_limit_reached') {
+        if (res.status === 403 && (json?.code === 'free_limit_reached' || json?.code === 'plan_limit_reached')) {
           setLockedMessage(
             json?.message || 'You have reached your free lead capture limit. Upgrade for unlimited leads.'
           );

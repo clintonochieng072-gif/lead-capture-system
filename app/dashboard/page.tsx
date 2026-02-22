@@ -34,6 +34,7 @@ const normalizeSource = (lead: any) => {
   if (value.includes('whatsapp') || value.includes('wa.me')) return 'WhatsApp';
   if (value.includes('instagram') || value.includes('insta')) return 'Instagram';
   if (value.includes('youtube') || value.includes('youtu')) return 'YouTube';
+  if (value.includes('tiktok') || value.includes('tik tok')) return 'TikTok';
   if (value.includes('email') || value.includes('mail')) return 'Email';
 
   return raw.charAt(0).toUpperCase() + raw.slice(1);
@@ -411,7 +412,7 @@ export default function DashboardPage() {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
-  const basePlatforms = ['Facebook', 'WhatsApp', 'Instagram', 'YouTube', 'Email'];
+  const basePlatforms = ['Facebook', 'WhatsApp', 'Instagram', 'YouTube', 'TikTok', 'Email'];
   const platformLeadCounts = leads.reduce((acc, lead) => {
     const source = normalizeSource(lead);
     acc[source] = (acc[source] || 0) + 1;
@@ -824,6 +825,11 @@ export default function DashboardPage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-[#1D3557]">Cumulative Leads by Platform</h2>
             <span className="text-xs font-medium text-[#457B9D]">Professional</span>
+          </div>
+
+          <div className="mb-3 flex items-center justify-between text-xs text-[#333333]/70">
+            <span>Y-axis: Number of leads</span>
+            <span>X-axis: Platforms</span>
           </div>
 
           <div className="space-y-3">

@@ -1,5 +1,38 @@
-import { NextRequest } from 'next/server';
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin';
+
+const normalizeSourceLabel = (value: string) => {
+  const raw = String(value || '').trim();
+  if (!raw) return null;
+
+  const candidate = raw.toLowerCase();
+  if (candidate.includes('facebook') || candidate.includes('fb.')) return 'Facebook';
+  if (candidate.includes('whatsapp') || candidate.includes('wa.me')) return 'WhatsApp';
+  if (candidate.includes('instagram') || candidate.includes('insta')) return 'Instagram';
+  if (candidate.includes('youtube') || candidate.includes('youtu')) return 'YouTube';
+  if (candidate.includes('tiktok') || candidate.includes('tik tok')) return 'TikTok';
+  if (candidate.includes('email') || candidate.includes('mail')) return 'Email';
+
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+};
+
+const detectLeadSource = (req: Request, explicitSource: string) => {
+  const fromBody = normalizeSourceLabel(explicitSource);
+  if (fromBody) return fromBody;
+
+  const url = new URL(req.url);
+  const querySource =
+    url.searchParams.get('source') ||
+    url.searchParams.get('utm_source') ||
+    url.searchParams.get('src') ||
+    url.searchParams.get('platform') ||
+    '';
+
+  const fromQuery = normalizeSourceLabel(querySource);
+  if (fromQuery) return fromQuery;
+
+  const referer = req.headers.get('referer') || '';
+  return normalizeSourceLabel(referer);
+};
 
 /**
  * POST /api/track/[slug]
@@ -17,6 +50,7 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
   const slug = params.slug;
   let name = '';
   let phone = '';
+  let explicitSource = '';
 
   try {
     const contentType = req.headers.get('content-type') || '';
@@ -24,11 +58,13 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
       const body = await req.json();
       name = String(body.name || '').trim();
       phone = String(body.phone || '').trim();
+      explicitSource = String(body.source || '').trim();
     } else {
       // Form submission
       const formData = await req.formData();
       name = String(formData.get('name') || '').trim();
       phone = String(formData.get('phone') || '').trim();
+      explicitSource = String(formData.get('source') || '').trim();
     }
 
     // Validate input
@@ -115,6 +151,7 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
     const normalizedPlan = String(ownerProfile?.plan || '').trim().toLowerCase();
     const isProfessional = hasActiveSubscription && normalizedPlan === 'professional';
     const isActiveIndividual = hasActiveSubscription && normalizedPlan !== 'professional';
+    const leadSource = isProfessional ? detectLeadSource(req, explicitSource) : null;
 
     if (isActiveIndividual) {
       const startOfMonth = new Date();
@@ -158,6 +195,10 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
           null
     };
 
+    if (leadSource) {
+      metadata.source = leadSource;
+    }
+
     // Insert lead (service role bypasses RLS)
     const { data: leadData, error: insertErr } = await supabaseAdmin
       .from('leads')
@@ -167,6 +208,7 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
           owner_user_id: linkData.owner_user_id,
           name,
           phone,
+          source: leadSource,
           metadata
         }
       ])
