@@ -421,6 +421,12 @@ export default function DashboardPage() {
   const dynamicPlatforms = Object.keys(platformLeadCounts).filter((name) => !basePlatforms.includes(name));
   const platformOrder = [...basePlatforms, ...dynamicPlatforms];
   const maxPlatformCount = Math.max(1, ...(Object.values(platformLeadCounts) as number[]));
+  const freeUnlockedLeadIds = new Set(
+    [...leads]
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+      .slice(0, NON_PRO_VISIBLE_LEADS)
+      .map((lead) => String(lead.id))
+  );
 
   const primaryLink = links[0] || null;
   const smartLinkUrl = primaryLink
@@ -697,7 +703,9 @@ export default function DashboardPage() {
               </thead>
               <tbody>
                 {filteredLeads.map((lead: any, index: number) => {
-                  const isContactLocked = isFreeTier && index >= NON_PRO_VISIBLE_LEADS;
+                  const isLockedForFree = isFreeTier && !freeUnlockedLeadIds.has(String(lead.id));
+                  const isContactLocked = isLockedForFree;
+                  const isActionLocked = isLockedForFree;
 
                   return (
                   <tr
@@ -760,14 +768,21 @@ export default function DashboardPage() {
                       </select>
                     </td>
                     <td className="px-4 py-3.5">
-                      {isContactLocked ? (
-                        <div className="flex items-center gap-2 opacity-50 blur-[1px]">
-                          <span className="inline-flex items-center justify-center rounded-lg bg-[#1D3557] px-2.5 py-1.5 text-xs font-semibold text-white">
-                            Call
-                          </span>
-                          <span className="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-2.5 py-1.5 text-xs font-semibold text-white">
-                            WhatsApp
-                          </span>
+                      {isActionLocked ? (
+                        <div className="relative max-w-[260px]">
+                          <div className="flex items-center gap-2 opacity-50 blur-[1px]">
+                            <span className="inline-flex items-center justify-center rounded-lg bg-[#1D3557] px-2.5 py-1.5 text-xs font-semibold text-white">
+                              Call
+                            </span>
+                            <span className="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-2.5 py-1.5 text-xs font-semibold text-white">
+                              WhatsApp
+                            </span>
+                          </div>
+                          <div className="absolute inset-0 flex items-center justify-start">
+                            <span className="rounded-md bg-[#1D3557]/90 px-2 py-1 text-[10px] font-semibold text-white">
+                              Subscribe to call or message leads.
+                            </span>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">

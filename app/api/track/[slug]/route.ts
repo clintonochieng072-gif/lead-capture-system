@@ -114,8 +114,9 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
     );
     const normalizedPlan = String(ownerProfile?.plan || '').trim().toLowerCase();
     const isProfessional = hasActiveSubscription && normalizedPlan === 'professional';
+    const isActiveIndividual = hasActiveSubscription && normalizedPlan !== 'professional';
 
-    if (!isProfessional) {
+    if (isActiveIndividual) {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
       startOfMonth.setHours(0, 0, 0, 0);

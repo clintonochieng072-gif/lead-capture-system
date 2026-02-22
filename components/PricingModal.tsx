@@ -34,7 +34,7 @@ const plans: {
     name: 'Professional',
     priceUsd: '$59/month',
     priceKes: '~7,600 KES',
-    badge: 'Most Popular',
+    badge: 'Recommended',
     features: [
       'Capture unlimited leads as your campaigns grow.',
       'See where your clients come from (Facebook, WhatsApp, Instagram, YouTube, Email).',
