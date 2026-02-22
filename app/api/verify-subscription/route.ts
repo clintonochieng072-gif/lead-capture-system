@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
     const metadata = (data.metadata || {}) as { user_id?: string; plan?: string }
     const userId = metadata.user_id
-    const plan = metadata.plan || 'Standard'
+    const plan = metadata.plan === 'Professional' ? 'Professional' : 'Individual'
 
     if (!userId) {
       console.warn('No user_id in metadata for reference', reference)

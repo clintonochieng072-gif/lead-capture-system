@@ -98,6 +98,7 @@ export async function POST(request: Request) {
     // We set metadata.user_id at initialization; use it here if present
     const metadata = data.metadata || {}
     const userId = metadata.user_id
+    const selectedPlan = metadata.plan === 'Professional' ? 'Professional' : 'Individual'
 
     if (!userId) {
       console.warn('Webhook missing user_id metadata')
@@ -122,7 +123,7 @@ export async function POST(request: Request) {
           subscription_expires_at: expiresAt,
           subscription_started_at: existingProfile?.subscription_started_at || nowIso,
           subscription_last_payment_at: nowIso,
-          plan: 'Standard',
+          plan: selectedPlan,
         })
         .eq('user_id', userId)
       

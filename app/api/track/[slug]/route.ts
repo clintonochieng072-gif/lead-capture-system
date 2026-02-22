@@ -93,7 +93,7 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
 
     const { data: ownerProfile, error: profileErr } = await supabaseAdmin
       .from('profiles')
-      .select('subscription_active, subscription_expires_at')
+      .select('subscription_active, subscription_expires_at, plan')
       .eq('user_id', linkData.owner_user_id)
       .maybeSingle();
 
@@ -112,12 +112,19 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
     const hasActiveSubscription = Boolean(
       ownerProfile?.subscription_active && subscriptionExpiresAt > now
     );
+    const normalizedPlan = String(ownerProfile?.plan || '').trim().toLowerCase();
+    const isProfessional = hasActiveSubscription && normalizedPlan === 'professional';
 
-    if (!hasActiveSubscription) {
+    if (!isProfessional) {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
       const { count: leadCount, error: leadCountErr } = await supabaseAdmin
         .from('leads')
         .select('id', { count: 'exact', head: true })
-        .eq('owner_user_id', linkData.owner_user_id);
+        .eq('owner_user_id', linkData.owner_user_id)
+        .gte('created_at', startOfMonth.toISOString());
 
       if (leadCountErr) {
         console.error('Lead count error:', leadCountErr);
@@ -127,11 +134,11 @@ export async function POST(req: Request, { params }: { params: { slug: string } 
         });
       }
 
-      if ((leadCount || 0) >= 5) {
+      if ((leadCount || 0) >= 50) {
         return new Response(
           JSON.stringify({
-            code: 'free_limit_reached',
-            message: 'You have reached your free lead capture limit. Upgrade for unlimited leads.'
+            code: 'plan_limit_reached',
+            message: 'You have reached your Individual plan limit of 50 leads this month. Upgrade to Professional for unlimited leads.'
           }),
           {
             status: 403,

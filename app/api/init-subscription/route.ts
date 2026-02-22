@@ -4,20 +4,23 @@ import { initializeTransaction } from '../../../lib/paystack'
 
 type Body = {
   userId: string
+  planName?: 'Individual' | 'Professional'
 }
 
 /**
  * POST /api/init-subscription
- * - expects { userId }
+ * - expects { userId, planName? }
  * - initializes Paystack transaction and returns authorization_url
  */
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as Body
-    const { userId } = body
+    const { userId, planName } = body
     if (!userId) {
       return NextResponse.json({ error: 'Missing userId' }, { status: 400 })
     }
+
+    const selectedPlan = planName === 'Professional' ? 'Professional' : 'Individual'
 
     // Verify user exists in Supabase
     const { data: profile, error: pErr } = await supabaseAdmin
@@ -33,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const amount = 99900
+    const amount = selectedPlan === 'Professional' ? 760000 : 370000
 
     // Determine callback URL (Paystack will redirect user here with ?reference=...)
     const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
@@ -46,7 +49,7 @@ export async function POST(request: Request) {
       callbackUrl,
       {
         user_id: userId,
-        plan: 'Standard',
+        plan: selectedPlan,
       },
       'KES'
     )
