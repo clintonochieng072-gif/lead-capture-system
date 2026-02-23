@@ -96,22 +96,34 @@ export default function PublicTrackerClient({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto px-4 sm:px-0">
-      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Talk to the Seller Today</h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            Share your details below and the seller will contact you directly.
+    <div className="w-full max-w-md mx-auto px-2 sm:px-0">
+      <div className="bg-white rounded-2xl shadow-xl p-5 sm:p-8 space-y-5 sm:space-y-6">
+        <div className="text-center space-y-3">
+          <p className="text-[11px] sm:text-xs leading-relaxed font-semibold tracking-wide uppercase text-indigo-700">
+            Step 1 of 1 — Quick &amp; Secure Info Sharing
           </p>
+          <h1 className="text-2xl sm:text-3xl font-bold leading-snug text-gray-900 text-balance">
+            You&apos;re one step away from viewing our collection
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Quickly interact with the seller by leaving your details — it&apos;s safe and secure.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-indigo-900 text-center sm:text-left">
+            <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center text-xl">😊</div>
+            <span className="text-sm font-medium">A quick call connects you to offers that fit your goals.</span>
+          </div>
         </div>
 
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs sm:text-sm text-gray-700 space-y-2">
           <p>We will only share your info with the seller — no spam.</p>
-          <p>Your contact is safe — expect a helpful call to close your deal.</p>
+          <p>Your contact is safe — expect a helpful call to explore the products.</p>
         </div>
 
         <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3 text-center text-sm text-indigo-900">
-          📞 👩🏽‍💼 [Call Support Cue: Expect a direct seller call]
+          📞 A seller or provider will contact you shortly.
         </div>
 
         {lockedMessage ? (
@@ -130,7 +142,7 @@ export default function PublicTrackerClient({
             <p className="text-sm sm:text-base text-gray-600">If you are not redirected, <a href={targetUrl} className="text-blue-600 underline">click here</a>.</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs sm:text-sm">{error}</div>
             )}
@@ -146,7 +158,7 @@ export default function PublicTrackerClient({
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full px-4 py-3 text-sm sm:text-base rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full px-4 py-3.5 text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
 
@@ -161,23 +173,23 @@ export default function PublicTrackerClient({
                 required
                 minLength={7}
                 maxLength={20}
-                className="w-full px-4 py-3 text-sm sm:text-base rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full px-4 py-3.5 text-base rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 px-4 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+              className="w-full min-h-[48px] py-3 px-4 text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-shadow disabled:opacity-70"
             >
-              {submitting ? 'Please wait…' : 'Get Connected Now'}
+              {submitting ? 'Please wait…' : 'Check What\'s on Offer'}
             </button>
           </form>
         )}
 
         <div className="pt-4 border-t border-gray-200 text-center text-xs text-gray-500 space-y-2">
           <p>🔒 Your contact details are safe and private</p>
-          <p>📲 You will receive a direct call from the seller</p>
+          <p>🤝 The seller would love to reach out and help you explore available products.</p>
         </div>
       </div>
     </div>
