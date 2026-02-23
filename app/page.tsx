@@ -42,8 +42,8 @@ export default function LandingPage() {
             <div className="space-y-3">
               <div className="overflow-hidden rounded-xl border border-red-100 bg-white">
                 <img
-                  src="https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                  alt="Business owner feeling frustrated while reviewing low sales"
+                  src="https://images.pexels.com/photos/936137/pexels-photo-936137.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="African business owner feeling frustrated while reviewing low sales"
                   className="h-40 w-full object-cover"
                   loading="lazy"
                 />
@@ -65,8 +65,8 @@ export default function LandingPage() {
             <div className="space-y-3">
               <div className="overflow-hidden rounded-xl border border-green-100 bg-white">
                 <img
-                  src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                  alt="Happy business owner closing deals and celebrating success"
+                  src="https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="Successful African business owner celebrating after closing deals"
                   className="h-40 w-full object-cover"
                   loading="lazy"
                 />

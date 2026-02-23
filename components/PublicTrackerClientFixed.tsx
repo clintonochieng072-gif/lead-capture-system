@@ -114,8 +114,8 @@ export default function PublicTrackerClient({
           <div className="space-y-3 text-indigo-900 text-center sm:text-left">
             <div className="overflow-hidden rounded-xl border border-indigo-100 bg-white">
               <img
-                src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                alt="Satisfied customer after connecting with a seller and finding the right offer"
+                src="https://images.pexels.com/photos/1184572/pexels-photo-1184572.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                alt="Satisfied African customer after connecting with a seller and finding the right offer"
                 className="h-44 w-full object-cover"
                 loading="lazy"
               />
