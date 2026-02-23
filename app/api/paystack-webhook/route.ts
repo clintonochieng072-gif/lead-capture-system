@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true })
     }
 
-    // 3️⃣ LCS LOGIC - Handle Lead Capture System events (existing logic unchanged)
+    // 3️⃣ LCS LOGIC - Handle Buyer Connection System events (existing logic unchanged)
     // We set metadata.user_id at initialization; use it here if present
     const metadata = data.metadata || {}
     const userId = metadata.user_id

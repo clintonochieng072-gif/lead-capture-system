@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       return (
         <div className="max-w-xl mx-auto p-8 bg-white rounded-lg shadow">
           <h2 className="text-lg font-semibold">Page not found</h2>
-          <p className="text-sm text-gray-600">This tracking link does not exist.</p>
+          <p className="text-sm text-gray-600">This page does not exist.</p>
         </div>
       );
     }
@@ -36,8 +36,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
     if (!linkData.is_active) {
       return (
         <div className="max-w-xl mx-auto p-8 bg-white rounded-lg shadow">
-          <h2 className="text-lg font-semibold">Link inactive</h2>
-          <p className="text-sm text-gray-600">This tracking link is no longer active.</p>
+          <h2 className="text-lg font-semibold">Page inactive</h2>
+          <p className="text-sm text-gray-600">This page is no longer active.</p>
         </div>
       );
     }

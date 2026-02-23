@@ -1,6 +1,6 @@
 # Paystack Integration Setup Guide
 
-This guide explains how to configure Paystack webhook and callback URLs for the lead capture system using your custom domain `leads.clintonstack.com`.
+This guide explains how to configure Paystack webhook and callback URLs for the buyer connection system using your custom domain `leads.clintonstack.com`.
 
 ## Quick Setup
 

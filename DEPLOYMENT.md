@@ -81,7 +81,7 @@ Once environment variables are set:
 ## Step 6: Test the Production Deployment
 
 1. Visit your Vercel URL (e.g., `https://leadflow.vercel.app`)
-2. Test the landing page, login, and lead capture flow
+2. Test the landing page, login, and buyer contact flow
 3. Try creating a tracking link and submitting a lead through the public capture page
 4. Verify leads appear in your dashboard
 

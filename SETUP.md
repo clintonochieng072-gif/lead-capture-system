@@ -1,6 +1,6 @@
-# Lead Capture MVP - Complete Setup Guide
+# Direct Buyer Access MVP - Complete Setup Guide
 
-This document outlines all the steps needed to get your Lead Capture SaaS running locally and deployed to production.
+This document outlines all the steps needed to get your Direct Buyer Access SaaS running locally and deployed to production.
 
 ## ✅ What's Already Done
 
@@ -10,7 +10,7 @@ This document outlines all the steps needed to get your Lead Capture SaaS runnin
 - [x] Google OAuth integrated
 - [x] API routes for lead submission
 - [x] Dashboard with lead management
-- [x] Public lead-capture form
+- [x] Public buyer contact form
 - [x] Error handling and validation
 
 ## 🚀 Quick Start (5-10 minutes)
@@ -19,7 +19,7 @@ This document outlines all the steps needed to get your Lead Capture SaaS runnin
 
 1. Go to https://supabase.com
 2. Click "New Project"
-3. Choose your organization and enter project name (e.g., "lead-capture-mvp")
+3. Choose your organization and enter project name (e.g., "direct-buyer-access-mvp")
 4. Set database password (save this securely)
 5. Choose region (recommended: closest to your users)
 6. Click "Create New Project" and wait for setup
@@ -127,7 +127,7 @@ Try to access the database directly:
 ## 📦 File Structure
 
 ```
-lead capture system/
+buyer connection system/
 ├── app/
 │   ├── api/
 │   │   ├── auth/
@@ -171,7 +171,7 @@ lead capture system/
 
 ### What's Public (by design)
 
-- `/t/:slug` — public lead-capture form (no auth required)
+- `/t/:slug` — public buyer contact form (no auth required)
 - `/api/track/:slug` — public lead submission (no auth required)
 
 ### Server-Side Safety
@@ -226,8 +226,8 @@ lead capture system/
 ```bash
 git init
 git add .
-git commit -m "Initial commit: Lead capture MVP"
-git remote add origin https://github.com/yourusername/lead-capture.git
+git commit -m "Initial commit: Direct Buyer Access MVP"
+git remote add origin https://github.com/yourusername/direct-buyer-access.git
 git branch -M main
 git push -u origin main
 ```

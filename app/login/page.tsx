@@ -48,8 +48,8 @@ export default function LoginPage() {
   return (
     <div className="max-w-xl mx-auto space-y-8 py-20">
       <section className="card text-center">
-        <h1 className="text-3xl font-bold">Sign in to your Lead Capture Dashboard</h1>
-        <p className="mt-2 text-gray-600">Use Google to quickly create an account and start capturing leads.</p>
+        <h1 className="text-3xl font-bold">Sign in to your Buyer Connections Dashboard</h1>
+        <p className="mt-2 text-gray-600">Use Google to quickly create an account and start connecting with interested buyers.</p>
         <div className="mt-6">
           <button onClick={handleGoogleSignIn} className="btn-primary px-6 py-3" disabled={loading}>
             {loading ? 'Redirecting…' : 'Continue with Google'}
@@ -61,7 +61,7 @@ export default function LoginPage() {
         <h3 className="text-xl font-semibold">Why sign in?</h3>
         <ul className="mt-3 list-inside list-disc text-gray-700">
           <li>Create tracking links for your campaigns</li>
-          <li>Capture leads and view them in one dashboard</li>
+          <li>Collect buyer contacts and view them in one dashboard</li>
           <li>Share links and grow your business</li>
         </ul>
       </section>

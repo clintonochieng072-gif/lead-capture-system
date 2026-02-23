@@ -640,7 +640,7 @@ export default function DashboardPage() {
 
       <section className="rounded-2xl border border-[#457B9D]/20 bg-white p-4 sm:p-5 shadow-sm animate-fade-in">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-[#1D3557]">Lead Capture Table</h2>
+          <h2 className="text-xl font-semibold text-[#1D3557]">Buyer Contacts Table</h2>
           {!isProfessional && (
             <button
               onClick={() => setShowPricingModal(true)}
@@ -686,7 +686,7 @@ export default function DashboardPage() {
 
         {filteredLeads.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-[#457B9D]/20 p-8 text-center text-sm text-[#333333]/70">
-            No leads yet. Share your smart link to start capturing interest.
+            No contacts yet. Share your smart link to start connecting with interested buyers.
           </div>
         ) : (
           <div className="relative">

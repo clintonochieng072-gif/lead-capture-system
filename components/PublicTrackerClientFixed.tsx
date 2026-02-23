@@ -77,7 +77,7 @@ export default function PublicTrackerClient({
       if (!res.ok) {
         if (res.status === 403 && (json?.code === 'free_limit_reached' || json?.code === 'plan_limit_reached')) {
           setLockedMessage(
-            json?.message || 'You have reached your free lead capture limit. Upgrade for unlimited leads.'
+            json?.message || 'This page is temporarily unavailable.'
           );
           return;
         }
@@ -97,23 +97,28 @@ export default function PublicTrackerClient({
 
   return (
     <div className="w-full max-w-md mx-auto px-4 sm:px-0">
-      <div className="mb-6 p-4 bg-white/60 backdrop-blur rounded-lg border border-gray-200/50 shadow-sm">
-        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-          <span className="font-semibold text-gray-900">We respect your privacy.</span> Your information is secure and will only be used to contact you regarding this request.
-        </p>
-      </div>
-
       <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Connect With Us</h1>
-          <p className="text-sm sm:text-base text-gray-600">Tell us a bit about yourself and we&apos;ll be in touch.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Talk to the Seller Today</h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Share your details below and the seller will contact you directly.
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs sm:text-sm text-gray-700 space-y-2">
+          <p>We will only share your info with the seller — no spam.</p>
+          <p>Your contact is safe — expect a helpful call to close your deal.</p>
+        </div>
+
+        <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3 text-center text-sm text-indigo-900">
+          📞 👩🏽‍💼 [Call Support Cue: Expect a direct seller call]
         </div>
 
         {lockedMessage ? (
           <div className="py-4 text-center space-y-3">
             <div className="text-5xl">🔒</div>
-            <p className="text-base sm:text-lg font-semibold text-gray-900">Lead Capture Locked</p>
-            <p className="text-sm sm:text-base text-gray-600">{lockedMessage}</p>
+            <p className="text-base sm:text-lg font-semibold text-gray-900">This page is temporarily unavailable</p>
+            <p className="text-sm sm:text-base text-gray-600">Please try again later or contact the seller directly.</p>
             <a href="/dashboard?upgrade=1" className="inline-block btn-primary text-sm sm:text-base">
               Upgrade
             </a>
@@ -131,7 +136,7 @@ export default function PublicTrackerClient({
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">Full Name</label>
+              <label className="block text-sm font-medium text-gray-900 mb-2">Name</label>
               <input
                 type="text"
                 name="name"
@@ -165,14 +170,14 @@ export default function PublicTrackerClient({
               disabled={submitting}
               className="w-full py-3 px-4 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-shadow"
             >
-              {submitting ? 'Submitting…' : 'View My Website'}
+              {submitting ? 'Please wait…' : 'Get Connected Now'}
             </button>
           </form>
         )}
 
         <div className="pt-4 border-t border-gray-200 text-center text-xs text-gray-500 space-y-2">
-          <p>🔒 Your data is encrypted and secure</p>
-          <p>⚡ Instant connection to the website owner</p>
+          <p>🔒 Your contact details are safe and private</p>
+          <p>📲 You will receive a direct call from the seller</p>
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ Complete these steps before deploying LeadFlow to production:
   - [ ] "Continue with Google" / "Get Started for Free" buttons trigger OAuth
   - [ ] Dashboard loads after auth
   - [ ] Can create tracking links
-  - [ ] Public lead capture page works and submits leads
+  - [ ] Public buyer contact page works and submits contacts
   - [ ] Leads appear in dashboard
 
 ## Vercel Setup ✓

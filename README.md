@@ -1,6 +1,6 @@
-# Lead Capture MVP
+# Direct Buyer Access MVP
 
-Minimal Next.js + Supabase MVP for lead-capture links.
+Minimal Next.js + Supabase MVP for buyer-connection links.
 
 Quick start:
 

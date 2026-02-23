@@ -1,9 +1,9 @@
 /**
- * Lead Capture MVP - PostgreSQL Schema for Supabase
+ * Direct Buyer Access MVP - PostgreSQL Schema for Supabase
  * 
  * This schema manages:
  * - User profiles (linked to Supabase auth.users)
- * - Tracking links (lead capture URLs)
+ * - Tracking links (buyer contact URLs)
  * - Captured leads (visitor submissions)
  * 
  * Security:
@@ -56,7 +56,7 @@ COMMENT ON TABLE public.profiles IS 'User account data linked to Supabase auth.u
 
 /**
  * tracking_links
- * Unique, shareable links that lead to lead-capture forms
+ * Unique, shareable links that lead to buyer contact forms
  * Each link has a target URL and captures visitors as leads
  */
 CREATE TABLE IF NOT EXISTS public.tracking_links (
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS public.tracking_links (
 CREATE INDEX IF NOT EXISTS idx_tracking_links_owner ON public.tracking_links (owner_user_id);
 CREATE INDEX IF NOT EXISTS idx_tracking_links_slug ON public.tracking_links (slug);
 CREATE INDEX IF NOT EXISTS idx_tracking_links_is_active ON public.tracking_links (is_active);
-COMMENT ON TABLE public.tracking_links IS 'Lead-capture tracking links owned by users';
+COMMENT ON TABLE public.tracking_links IS 'Buyer-contact tracking links owned by users';
 COMMENT ON COLUMN public.tracking_links.slug IS 'Unique public identifier (e.g., "abc12345")';
 COMMENT ON COLUMN public.tracking_links.target_url IS 'URL to redirect visitor after lead submission';
 
@@ -171,7 +171,7 @@ BEGIN
   VALUES (
     NEW.id,
     new_slug,
-    'Default Lead Capture Link',
+    'Default Buyer Contact Link',
     'Your first tracking link. Set target URL and share to start capturing leads.',
     true,
     true,

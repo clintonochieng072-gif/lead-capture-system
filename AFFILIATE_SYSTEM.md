@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Lead Capture System (LCS) now includes a complete affiliate commission tracking system that integrates with an external Affiliate System. This implementation ensures:
+The Buyer Connection System (LCS) now includes a complete affiliate commission tracking system that integrates with an external Affiliate System. This implementation ensures:
 
 - ✅ **Referral tracking**: Captures affiliate referral IDs during user registration
 - ✅ **Conditional commission**: Awards commissions ONLY when users activate accounts
