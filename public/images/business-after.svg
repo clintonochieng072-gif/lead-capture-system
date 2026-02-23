@@ -1,0 +1,60 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">After: African business owner confidently closing deals</title>
+  <desc id="desc">An African entrepreneur smiling in a busy office, making calls and celebrating business success.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ECFDF5"/>
+      <stop offset="1" stop-color="#EEF2FF"/>
+    </linearGradient>
+    <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#D1FAE5"/>
+      <stop offset="1" stop-color="#A7F3D0"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1200" height="800" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#065F46" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect x="70" y="90" width="1060" height="620" rx="24" fill="#FFFFFF" filter="url(#shadow)"/>
+
+  <rect x="120" y="150" width="300" height="170" rx="16" fill="#F0FDF4"/>
+  <rect x="145" y="175" width="250" height="14" rx="7" fill="#86EFAC"/>
+  <rect x="145" y="205" width="190" height="12" rx="6" fill="#BBF7D0"/>
+  <rect x="145" y="230" width="220" height="12" rx="6" fill="#BBF7D0"/>
+  <rect x="145" y="255" width="170" height="12" rx="6" fill="#BBF7D0"/>
+
+  <rect x="120" y="360" width="300" height="220" rx="16" fill="#F8FAFC" stroke="#D1FAE5"/>
+  <rect x="145" y="395" width="250" height="18" rx="9" fill="#BBF7D0"/>
+  <rect x="145" y="425" width="190" height="14" rx="7" fill="#DCFCE7"/>
+  <rect x="145" y="450" width="220" height="14" rx="7" fill="#DCFCE7"/>
+
+  <rect x="520" y="500" width="560" height="130" rx="18" fill="url(#desk)"/>
+  <rect x="565" y="465" width="220" height="35" rx="10" fill="#34D399"/>
+  <rect x="805" y="435" width="170" height="105" rx="10" fill="#D1FAE5" stroke="#6EE7B7"/>
+  <rect x="818" y="448" width="144" height="62" rx="6" fill="#FFFFFF"/>
+  <polyline points="828,500 852,486 876,492 907,470 938,476 958,458" stroke="#10B981" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <ellipse cx="830" cy="325" rx="115" ry="120" fill="#111827"/>
+  <rect x="755" y="420" width="150" height="120" rx="24" fill="#2563EB"/>
+
+  <ellipse cx="830" cy="300" rx="72" ry="78" fill="#8B5E3C"/>
+  <circle cx="807" cy="292" r="6" fill="#0F172A"/>
+  <circle cx="853" cy="292" r="6" fill="#0F172A"/>
+  <path d="M802 322 Q830 344 858 322" stroke="#7C3F2A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M796 272 Q807 266 818 271" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M842 271 Q853 266 864 272" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+
+  <rect x="900" y="255" width="80" height="136" rx="16" fill="#111827" transform="rotate(20 900 255)"/>
+  <rect x="909" y="267" width="62" height="97" rx="10" fill="#ECFEFF" transform="rotate(20 909 267)"/>
+  <line x1="920" y1="292" x2="953" y2="304" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+  <line x1="914" y1="314" x2="946" y2="326" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
+
+  <rect x="970" y="180" width="132" height="52" rx="26" fill="#DCFCE7" stroke="#86EFAC"/>
+  <text x="1036" y="212" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="700" fill="#047857">12 Calls Today</text>
+
+  <circle cx="1010" cy="420" r="38" fill="#FDE68A"/>
+  <path d="M995 420 L1008 434 L1030 410" stroke="#B45309" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="600" y="700" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="700" fill="#065F46">More calls. More deals. Confident growth.</text>
+</svg>
