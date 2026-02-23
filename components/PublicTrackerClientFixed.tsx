@@ -129,10 +129,6 @@ export default function PublicTrackerClient({
           <p>Your contact is safe — expect a helpful call to explore the products.</p>
         </div>
 
-        <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3 text-center text-sm text-indigo-900">
-          A seller or provider will contact you shortly.
-        </div>
-
         {lockedMessage ? (
           <div className="py-4 text-center space-y-3">
             <p className="text-base sm:text-lg font-semibold text-gray-900">This page is temporarily unavailable</p>

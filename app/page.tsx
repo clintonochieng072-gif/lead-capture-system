@@ -85,6 +85,10 @@ export default function LandingPage() {
             Direct Buyer Access helps business owners connect with potential buyers quickly and safely. One simple step can start your transformation.
           </p>
 
+          <p className="text-sm sm:text-base text-gray-600">
+            Capture buyer phone contacts from people visiting your page, start real conversations faster, and close more deals with confidence.
+          </p>
+
           <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
             <a
               href="/login"
