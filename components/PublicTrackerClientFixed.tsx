@@ -111,9 +111,16 @@ export default function PublicTrackerClient({
         </div>
 
         <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-indigo-900 text-center sm:text-left">
-            <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center text-xl">😊</div>
-            <span className="text-sm font-medium">A quick call connects you to offers that fit your goals.</span>
+          <div className="space-y-3 text-indigo-900 text-center sm:text-left">
+            <div className="overflow-hidden rounded-xl border border-indigo-100 bg-white">
+              <img
+                src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                alt="Satisfied customer after connecting with a seller and finding the right offer"
+                className="h-44 w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <span className="block text-sm font-medium">A quick call connects you to offers that fit your goals.</span>
           </div>
         </div>
 
@@ -123,12 +130,11 @@ export default function PublicTrackerClient({
         </div>
 
         <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3 text-center text-sm text-indigo-900">
-          📞 A seller or provider will contact you shortly.
+          A seller or provider will contact you shortly.
         </div>
 
         {lockedMessage ? (
           <div className="py-4 text-center space-y-3">
-            <div className="text-5xl">🔒</div>
             <p className="text-base sm:text-lg font-semibold text-gray-900">This page is temporarily unavailable</p>
             <p className="text-sm sm:text-base text-gray-600">Please try again later or contact the seller directly.</p>
             <a href="/dashboard?upgrade=1" className="inline-block btn-primary text-sm sm:text-base">
@@ -137,7 +143,6 @@ export default function PublicTrackerClient({
           </div>
         ) : submitted ? (
           <div className="py-8 text-center space-y-3">
-            <div className="text-5xl">✅</div>
             <p className="text-base sm:text-lg font-semibold text-green-600">Redirecting…</p>
             <p className="text-sm sm:text-base text-gray-600">If you are not redirected, <a href={targetUrl} className="text-blue-600 underline">click here</a>.</p>
           </div>
@@ -188,8 +193,8 @@ export default function PublicTrackerClient({
         )}
 
         <div className="pt-4 border-t border-gray-200 text-center text-xs text-gray-500 space-y-2">
-          <p>🔒 Your contact details are safe and private</p>
-          <p>🤝 The seller would love to reach out and help you explore available products.</p>
+          <p>Your contact details are safe and private.</p>
+          <p>The seller would love to reach out and help you explore available products.</p>
         </div>
       </div>
     </div>

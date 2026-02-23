@@ -40,7 +40,14 @@ export default function LandingPage() {
           <div className="rounded-2xl border border-red-100 bg-red-50 p-4 sm:p-6 flex flex-col justify-between min-h-[190px] sm:min-h-[240px]">
             <p className="text-xs font-semibold tracking-wide text-red-700 uppercase">Before</p>
             <div className="space-y-3">
-              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-white flex items-center justify-center text-2xl sm:text-3xl">😟</div>
+              <div className="overflow-hidden rounded-xl border border-red-100 bg-white">
+                <img
+                  src="https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="Business owner feeling frustrated while reviewing low sales"
+                  className="h-40 w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
               <p className="text-sm sm:text-base text-red-900">No calls. No clients. Offers left unseen.</p>
             </div>
           </div>
@@ -56,7 +63,14 @@ export default function LandingPage() {
           <div className="rounded-2xl border border-green-100 bg-green-50 p-4 sm:p-6 flex flex-col justify-between min-h-[190px] sm:min-h-[240px]">
             <p className="text-xs font-semibold tracking-wide text-green-700 uppercase">After</p>
             <div className="space-y-3">
-              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-white flex items-center justify-center text-2xl sm:text-3xl">🎉</div>
+              <div className="overflow-hidden rounded-xl border border-green-100 bg-white">
+                <img
+                  src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="Happy business owner closing deals and celebrating success"
+                  className="h-40 w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
               <p className="text-sm sm:text-base text-green-900">More calls. Real buyer conversations. Deals closing.</p>
             </div>
           </div>
