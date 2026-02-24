@@ -230,7 +230,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900">100% Secure</h3>
               <p className="text-gray-600">
-                Your leads' information is protected with enterprise-grade security. No spam, no data sharing.
+                Your leads&apos; information is protected with enterprise-grade security. No spam, no data sharing.
               </p>
             </div>
 
@@ -256,7 +256,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900">Track Your Growth</h3>
               <p className="text-gray-600">
-                Monitor your lead flow with a simple dashboard that shows you what's working and where to improve.
+                Monitor your lead flow with a simple dashboard that shows you what&apos;s working and where to improve.
               </p>
             </div>
           </div>
