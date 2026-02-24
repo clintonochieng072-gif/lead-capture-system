@@ -91,8 +91,10 @@ export function verifyWebhookSignature(rawBody: string, signature?: string) {
   }
 }
 
-export default {
+const paystackService = {
   initializeTransaction,
   verifyTransaction,
   verifyWebhookSignature,
 }
+
+export default paystackService
