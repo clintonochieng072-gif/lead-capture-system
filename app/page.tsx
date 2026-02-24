@@ -35,7 +35,7 @@ export default function LandingPage() {
             href="/login"
             className="inline-flex w-full sm:w-auto min-h-[44px] items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
           >
-            Check What&apos;s on Offer
+            Get Started for Free
           </a>
         </div>
       </header>
@@ -52,22 +52,16 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Direct Buyer Access helps business owners connect with potential buyers quickly and safely. Start capturing leads and closing more deals today.
+              Direct Buyer Access helps business owners connect with potential buyers quickly and safely. Start getting buyer contact details and closing more deals today.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex justify-center">
             <a
               href="/login"
               className="inline-flex w-full sm:w-auto min-h-[56px] items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
             >
-              Start My Transformation
-            </a>
-            <a
-              href="/login"
-              className="inline-flex w-full sm:w-auto min-h-[56px] items-center justify-center rounded-xl border-2 border-gray-300 bg-white px-8 py-4 text-base font-semibold text-gray-800 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:border-gray-400"
-            >
-              See Plans & Pricing
+              Get Started for Free
             </a>
           </div>
 
@@ -95,7 +89,7 @@ export default function LandingPage() {
                 No calls.<br />No buyer conversations.
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
-                Business owners spend hours searching for leads, posting on social media, and waiting for the phone to ring. Days pass with empty pipelines and missed opportunities.
+                Business owners spend hours searching for prospects, posting on social media, and waiting for the phone to ring. Days pass with empty pipelines and missed opportunities.
               </p>
               <div className="pt-4 space-y-2">
                 <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -108,7 +102,7 @@ export default function LandingPage() {
                   <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
-                  Wasting time on unqualified leads
+                  Wasting time on unqualified prospects
                 </div>
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -132,14 +126,14 @@ export default function LandingPage() {
                 More calls.<br />More deals. Real growth.
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
-                With Direct Buyer Access, every visitor becomes a potential lead. Capture contact details effortlessly, follow up quickly, and watch your sales pipeline fill with opportunities.
+                With Direct Buyer Access, every visitor provides their contact details. Capture information effortlessly, follow up quickly, and watch your sales pipeline fill with opportunities.
               </p>
               <div className="pt-4 space-y-2">
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Automatic lead capture from every visitor
+                  Automatically collect buyer contact details from every visitor
                 </div>
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -174,7 +168,7 @@ export default function LandingPage() {
         <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 lg:p-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Everything you need to capture leads and close deals
+              Everything you need to get buyer contact details and close deals
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Simple, secure, and designed for business owners who want to grow their customer base fast.
@@ -189,9 +183,9 @@ export default function LandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">Capture Every Lead</h3>
+              <h3 className="text-xl font-bold text-gray-900">Get Every Buyer&apos;s Contact Details</h3>
               <p className="text-gray-600">
-                Automatically collect contact information from visitors interested in your products or services.
+                Automatically collect buyer contact information from visitors interested in your products or services.
               </p>
             </div>
 
@@ -217,7 +211,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900">Close More Deals</h3>
               <p className="text-gray-600">
-                Turn website visitors into paying customers with a proven lead capture and follow-up system.
+                Turn website visitors into paying customers with a proven system for capturing buyer information and following up.
               </p>
             </div>
 
@@ -230,7 +224,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900">100% Secure</h3>
               <p className="text-gray-600">
-                Your leads&apos; information is protected with enterprise-grade security. No spam, no data sharing.
+                Buyer information is protected with enterprise-grade security. No spam, no data sharing.
               </p>
             </div>
 
@@ -243,7 +237,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900">Lightning Fast Setup</h3>
               <p className="text-gray-600">
-                Get your lead capture page up and running in minutes. No technical skills required.
+                Get your buyer contact page up and running in minutes. No technical skills required.
               </p>
             </div>
 
@@ -256,7 +250,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900">Track Your Growth</h3>
               <p className="text-gray-600">
-                Monitor your lead flow with a simple dashboard that shows you what&apos;s working and where to improve.
+                Track buyer inquiries with a simple dashboard that shows you what&apos;s working and where to improve.
               </p>
             </div>
           </div>
@@ -274,27 +268,17 @@ export default function LandingPage() {
               Ready to transform your business?
             </h2>
             <p className="text-xl text-indigo-100 max-w-2xl mx-auto">
-              Join hundreds of business owners already using Direct Buyer Access to capture leads and close deals every day.
+              Join hundreds of business owners already using Direct Buyer Access to get buyer contact details and close deals every day.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+            <div className="flex justify-center pt-4">
               <a
                 href="/login"
                 className="inline-flex w-full sm:w-auto min-h-[56px] items-center justify-center rounded-xl bg-white px-8 py-4 text-base font-bold text-indigo-600 shadow-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl"
               >
-                Get Started Now
-              </a>
-              <a
-                href="/login"
-                className="inline-flex w-full sm:w-auto min-h-[56px] items-center justify-center rounded-xl border-2 border-white bg-transparent px-8 py-4 text-base font-semibold text-white transition-all duration-200 hover:bg-white/10"
-              >
-                View Demo
+                Get Started for Free
               </a>
             </div>
-
-            <p className="text-sm text-indigo-100 pt-4">
-              No credit card required • 7-day free trial • Cancel anytime
-            </p>
           </div>
         </div>
       </section>
