@@ -24,12 +24,11 @@ const MAX_RETRY_ATTEMPTS = 3;
  * All fields marked REQUIRED must be present
  */
 interface CommissionPayload {
-  referrer_id: string;      // Affiliate's referral code (REQUIRED)
+  agent_code: string;       // Affiliate agent code (REQUIRED)
   user_email: string;       // Activated user's email (REQUIRED)
-  amount: number;           // Commission amount in smallest unit (REQUIRED)
+  plan_type: 'Individual' | 'Professional'; // Plan type (REQUIRED)
   reference: string;        // Unique transaction ID for idempotency (REQUIRED)
-  product_slug?: string;    // Product identifier (OPTIONAL)
-  metadata?: Record<string, any>; // Additional data (OPTIONAL)
+  client_name?: string;     // Activated user's full name (OPTIONAL)
 }
 
 /**
@@ -127,10 +126,11 @@ async function recordCommissionNotification(
  */
 export async function notifyAffiliateSystem(
   userId: string,
-  referrerId: string,
+  agentCode: string,
   userEmail: string,
-  amount: number,
-  paymentReference: string
+  planType: 'Individual' | 'Professional',
+  paymentReference: string,
+  clientName?: string
 ): Promise<{ success: boolean; error?: string }> {
   // 1. Validate configuration
   if (!AFFILIATE_API_URL || !AFFILIATE_API_SECRET) {
@@ -155,16 +155,11 @@ export async function notifyAffiliateSystem(
 
   // 4. Build payload per Affiliate System API specification
   const payload: CommissionPayload = {
-    referrer_id: referrerId,        // REQUIRED: Affiliate's referral code
+    agent_code: agentCode,          // REQUIRED: Affiliate's agent code
     user_email: userEmail,          // REQUIRED: User's email
-    amount: amount,                 // REQUIRED: Commission amount
+    plan_type: planType,            // REQUIRED: User plan type
     reference: uniqueReference,     // REQUIRED: Unique transaction ID
-    product_slug: 'lcs',           // OPTIONAL: Product identifier
-    metadata: {                     // OPTIONAL: Additional context
-      user_id: userId,
-      activated_at: new Date().toISOString(),
-      source: 'lead_capture_system'
-    }
+    client_name: clientName || ''   // OPTIONAL: User full name
   };
 
   let lastError = '';
@@ -193,32 +188,34 @@ export async function notifyAffiliateSystem(
         // 200: Success or idempotent (already processed)
         await recordCommissionNotification({
           user_id: userId,
-          referrer_id: referrerId,
+          referrer_id: agentCode,
           payment_reference: uniqueReference,
           user_email: userEmail,
-          amount,
+          amount: 0,
           status: 'success',
           response_data: responseData,
           retry_count: retryCount,
         });
 
+        await markCommissionNotified(userId);
+
         console.log(`✅ Commission notification sent successfully for user ${userId}`);
-        console.log(`✅ Affiliate ${referrerId} will receive ${amount} commission`);
+        console.log(`✅ Affiliate agent ${agentCode} notified successfully`);
         console.log(`✅ Response:`, JSON.stringify(responseData));
         return { success: true };
       }
 
       // Handle specific error codes
       if (response.status === 404) {
-        // 404: Invalid referrer_id - don't retry
-        lastError = `Invalid referrer_id: ${referrerId} not found in Affiliate System`;
+        // 404: Invalid agent_code - don't retry
+        lastError = `Invalid agent_code: ${agentCode} not found in Affiliate System`;
         console.error(`❌ ${lastError}`);
         await recordCommissionNotification({
           user_id: userId,
-          referrer_id: referrerId,
+          referrer_id: agentCode,
           payment_reference: uniqueReference,
           user_email: userEmail,
-          amount,
+          amount: 0,
           status: 'failed',
           error_message: lastError,
           retry_count: retryCount,
@@ -232,10 +229,10 @@ export async function notifyAffiliateSystem(
         console.error(`❌ ${lastError}`);
         await recordCommissionNotification({
           user_id: userId,
-          referrer_id: referrerId,
+          referrer_id: agentCode,
           payment_reference: uniqueReference,
           user_email: userEmail,
-          amount,
+          amount: 0,
           status: 'failed',
           error_message: lastError,
           retry_count: retryCount,
@@ -284,10 +281,10 @@ export async function notifyAffiliateSystem(
   // All retries failed - record the failure for audit
   await recordCommissionNotification({
     user_id: userId,
-    referrer_id: referrerId,
+    referrer_id: agentCode,
     payment_reference: uniqueReference,
     user_email: userEmail,
-    amount,
+    amount: 0,
     status: 'failed',
     error_message: lastError,
     retry_count: retryCount,
@@ -305,10 +302,10 @@ export async function notifyAffiliateSystem(
  */
 export async function shouldNotifyAffiliate(
   userId: string
-): Promise<{ should: boolean; referrerId?: string; email?: string }> {
+): Promise<{ should: boolean; agentCode?: string; email?: string; planType?: 'Individual' | 'Professional'; clientName?: string }> {
   const { data: profile, error } = await supabaseAdmin
     .from('profiles')
-    .select('referrer_id, subscription_active, email')
+    .select('referrer_id, subscription_active, email, plan, full_name, commission_notified')
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -325,6 +322,9 @@ export async function shouldNotifyAffiliate(
   // Check both conditions
   const hasReferrer = Boolean(profile.referrer_id && profile.referrer_id.trim() !== '');
   const isActive = Boolean(profile.subscription_active);
+  const commissionAlreadyNotified = Boolean(profile.commission_notified);
+  const hasValidEmail = Boolean(profile.email && String(profile.email).includes('@'));
+  const planType: 'Individual' | 'Professional' = profile.plan === 'Professional' ? 'Professional' : 'Individual';
 
   if (!hasReferrer) {
     console.log(`User ${userId} has no referrer_id - not notifying affiliate system`);
@@ -336,12 +336,39 @@ export async function shouldNotifyAffiliate(
     return { should: false };
   }
 
+  if (commissionAlreadyNotified) {
+    console.log(`User ${userId} commission already notified on initial activation - skipping`);
+    return { should: false };
+  }
+
+  if (!hasValidEmail) {
+    console.log(`User ${userId} has invalid email - not notifying affiliate system`);
+    return { should: false };
+  }
+
   console.log(`User ${userId} qualifies for affiliate commission (referrer: ${profile.referrer_id})`);
   return {
     should: true,
-    referrerId: profile.referrer_id,
+    agentCode: profile.referrer_id,
     email: profile.email || '',
+    planType,
+    clientName: profile.full_name || '',
   };
+}
+
+async function markCommissionNotified(userId: string): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from('profiles')
+    .update({
+      commission_notified: true,
+      commission_notified_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error(`Failed to mark commission_notified for user ${userId}:`, error);
+  }
 }
 
 /**
@@ -366,13 +393,20 @@ export async function retryFailedCommissions(limit: number = 10): Promise<number
 
   for (const notification of failedNotifications) {
     console.log(`Retrying failed commission for user ${notification.user_id}...`);
+
+    const affiliateCheck = await shouldNotifyAffiliate(notification.user_id);
+    if (!affiliateCheck.should || !affiliateCheck.agentCode || !affiliateCheck.email || !affiliateCheck.planType) {
+      console.log(`Skipping retry for user ${notification.user_id} - no longer qualifies for affiliate notification`);
+      continue;
+    }
     
     const result = await notifyAffiliateSystem(
       notification.user_id,
-      notification.referrer_id,
-      notification.user_email,
-      notification.amount,
-      notification.payment_reference
+      affiliateCheck.agentCode,
+      affiliateCheck.email,
+      affiliateCheck.planType,
+      notification.payment_reference,
+      affiliateCheck.clientName || ''
     );
 
     if (result.success) {

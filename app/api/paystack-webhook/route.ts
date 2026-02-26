@@ -132,22 +132,21 @@ export async function POST(request: Request) {
       // Check if we should notify the Affiliate System
       const affiliateCheck = await shouldNotifyAffiliate(userId)
       
-      if (affiliateCheck.should && affiliateCheck.referrerId && affiliateCheck.email) {
+      if (affiliateCheck.should && affiliateCheck.agentCode && affiliateCheck.email && affiliateCheck.planType) {
         console.log(`User ${userId} qualifies for affiliate commission - notifying affiliate system...`)
         
         // Get payment reference from webhook data
         const paymentReference = data.reference || ''
-        // Fixed commission amount: 70 KES (sent as 70, affiliate system interprets as KES)
-        const paymentAmount = 70
         
         // Notify the Affiliate System (runs async with retries)
         // We don't wait for this to complete to avoid blocking the webhook response
         notifyAffiliateSystem(
           userId,
-          affiliateCheck.referrerId,
+          affiliateCheck.agentCode,
           affiliateCheck.email,
-          paymentAmount,
-          paymentReference
+          affiliateCheck.planType,
+          paymentReference,
+          affiliateCheck.clientName || ''
         ).then((result) => {
           if (result.success) {
             console.log(`Successfully notified affiliate system for user ${userId}`)
