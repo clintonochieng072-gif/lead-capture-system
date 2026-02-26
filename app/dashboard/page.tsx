@@ -202,6 +202,10 @@ export default function DashboardPage() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('subscription') === 'success') {
       refreshDashboard();
+
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete('subscription');
+      window.history.replaceState({}, '', cleanUrl.toString());
     }
   }, [refreshDashboard]);
 

@@ -47,7 +47,6 @@ const plans: {
 export default function PricingModal({
   open,
   loading = false,
-  currentPlan,
   onClose,
   onChoosePlan,
 }: PricingModalProps) {
@@ -72,17 +71,26 @@ export default function PricingModal({
         <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 sm:gap-5 sm:p-6">
           {plans.map((plan) => {
             const isPro = plan.name === 'Professional';
-            const isCurrent = Boolean(currentPlan) && (currentPlan || '').toLowerCase() === plan.name.toLowerCase();
-            const cta = isCurrent ? 'Current Plan' : isPro ? 'Upgrade' : 'Subscribe';
+            const cta = isPro ? 'Upgrade' : 'Subscribe';
 
             return (
               <article
                 key={plan.name}
+                onClick={() => !loading && onChoosePlan(plan.name)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (loading) return;
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onChoosePlan(plan.name);
+                  }
+                }}
                 className={`rounded-2xl border p-5 shadow-sm transition-all ${
                   isPro
                     ? 'border-[#1D3557] bg-gradient-to-b from-[#F3F8FD] to-white ring-2 ring-[#457B9D]/30'
                     : 'border-[#457B9D]/25 bg-white'
-                }`}
+                } ${loading ? 'cursor-wait' : 'cursor-pointer'}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -107,8 +115,11 @@ export default function PricingModal({
                 </ul>
 
                 <button
-                  onClick={() => onChoosePlan(plan.name)}
-                  disabled={loading || isCurrent}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onChoosePlan(plan.name);
+                  }}
+                  disabled={loading}
                   className={`mt-5 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
                     isPro
                       ? 'bg-[#1D3557] text-white hover:bg-[#17314f] hover:shadow-md'
