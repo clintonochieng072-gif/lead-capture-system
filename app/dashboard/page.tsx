@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import supabaseClient from '../../lib/supabaseClient';
 import { getUserTrackingLinks, getUserLeads, updateTrackingLinkTarget } from '../../lib/db';
+import { Profile } from '../../lib/types';
 import PricingModal from '../../components/PricingModal';
 
 type NotificationItem = {
@@ -123,10 +124,16 @@ export default function DashboardPage() {
 
     try {
       let { data: profile } = await supabaseClient
-        .from('profiles')
+        .from<Profile>('profiles')
         .select('*')
         .eq('user_id', session.user.id)
         .maybeSingle();
+
+      // redirect to complete-profile if phone number is missing/empty
+      if (profile && (!profile.phone_number || String(profile.phone_number).trim() === '')) {
+        router.push('/complete-profile');
+        return;
+      }
 
       if (!profile) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -163,6 +170,12 @@ export default function DashboardPage() {
           .maybeSingle();
 
         profile = profileRes.data;
+
+        // if profile just created and still missing phone number, send user off
+        if (profile && (!profile.phone_number || String(profile.phone_number).trim() === '')) {
+          router.push('/complete-profile');
+          return;
+        }
       }
 
       const expiryTs = profile?.subscription_expires_at ? new Date(profile.subscription_expires_at).getTime() : 0;

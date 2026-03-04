@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabaseClient } from '../../lib/supabaseClient';
 import PricingModal from '../../components/PricingModal';
 
 type PlanName = 'Individual' | 'Professional';
 
 export default function SubscriptionPage() {
+  const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const [showPlans, setShowPlans] = useState(false);
@@ -31,14 +33,15 @@ export default function SubscriptionPage() {
 
           const { data: profile } = await supabaseClient
             .from('profiles')
-            .select('plan, subscription_active, subscription_expires_at')
+            .select('plan, subscription_active, subscription_expires_at, phone_number')
             .eq('user_id', user.id)
             .maybeSingle();
 
-          const expiryTs = profile?.subscription_expires_at ? new Date(profile.subscription_expires_at).getTime() : 0;
-          const active = Boolean(profile?.subscription_active && expiryTs > Date.now());
-
-          if (!active) {
+          // redirect to complete-profile if phone number missing (same rule as dashboard)
+          if (profile && (!profile.phone_number || String(profile.phone_number).trim() === '')) {
+            router.push('/complete-profile');
+            return;
+          }
             setCurrentPlan(null);
           } else if (String(profile?.plan || '').toLowerCase() === 'professional') {
             setCurrentPlan('Professional');
